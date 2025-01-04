@@ -1,7 +1,7 @@
 <div class="p-6">
     <h2 class="text-lg font-semibold mb-4">Gerir Escolas</h2>
 
-    <!-- Formulário para adicionar ou editar escola -->
+    <!-- Formulário para adicionar escola -->
     <form wire:submit.prevent="store" class="mb-6 space-y-4">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Nome da Escola -->
@@ -26,19 +26,15 @@
             </div>
         </div>
 
-        <x-ts-button type="submit" class="mt-4">
-            @if($editing)
-                Editar
-            @else
-                Salvar Escola
-            @endif
-        </x-ts-button>
-
-        <!-- Mostrar mensagem de "Processando" durante o envio -->
-        <x-ts-button wire:loading wire:loading.class="opacity-50" type="submit" class="mt-4">
-            Processando...
-        </x-ts-button>
+        <x-ts-button type="submit" class="mt-4">Salvar Escola</x-ts-button>
     </form>
+
+    <!-- Mensagens de Sucesso -->
+    @if (session()->has('success'))
+        <div class="bg-green-100 text-green-700 px-4 py-2 rounded-md mb-4">
+            {{ session('success') }}
+        </div>
+    @endif
 
     <!-- Tabela de Escolas -->
     <div>
@@ -72,7 +68,7 @@
                             </button>
 
                             <!-- Botão Excluir -->
-                            <button wire:click="confirmDelete({{ $school->id }})" class="text-red-500 hover:text-red-700">
+                            <button wire:click="delete({{ $school->id }})" class="text-red-500 hover:text-red-700">
                                 <i class="fas fa-trash"></i> Excluir
                             </button>
                         </td>
@@ -81,18 +77,6 @@
             </tbody>
         </table>
     </div>
-
-    <!-- Modal de confirmação de exclusão -->
-    <x-ts-modal wire:model="confirmingDelete" class="p-4 max-w-lg mx-auto">
-        <h3 class="text-xl font-semibold mb-4">Confirmar Exclusão</h3>
-        <p>Tem certeza de que deseja excluir esta escola?</p>
-        
-        <div class="mt-4 flex justify-end space-x-2">
-            <!-- Botões de Cancelar e Confirmar -->
-            <x-ts-button wire:click="cancelDelete" class="bg-gray-300">Cancelar</x-ts-button>
-            <x-ts-button wire:click="delete" class="bg-red-600">Excluir</x-ts-button>
-        </div>
-    </x-ts-modal>
 </div>
 
 <!-- Script para incluir FontAwesome (se necessário para os ícones) -->
