@@ -15,7 +15,6 @@ class Schools extends Component
     public $priority_level;
     public $editing = false;
     public $schoolIdToDelete = null; 
-    public $confirmingDelete = false;
 
     protected $rules = [
         'name' => 'required|string|unique:schools,name|max:255',
@@ -44,12 +43,11 @@ class Schools extends Component
             ]);
         }
 
-        $this->toast()->success('Successo', 'Escola cadastrada com sucesso!')->send();
+        $this->toast()->success('Sucesso', 'Escola cadastrada com sucesso!')->send();
         $this->resetForm();
         $this->schools = School::orderBy('priority_level', 'asc')->get(); 
     }
 
-    
     public function edit($id)
     {
         $this->editing = true;
@@ -59,27 +57,16 @@ class Schools extends Component
         $this->schoolIdToDelete = $id;
     }
 
-    public function confirmDelete($id)
+    public function delete($id)
     {
-        $this->confirmingDelete = true;
-        $this->schoolIdToDelete = $id;
-    }
+        $school = School::find($id);
 
-    public function cancelDelete()
-    {
-        $this->confirmingDelete = false;
-        $this->schoolIdToDelete = null;
-    }
+        if ($school) {
+            $school->delete();
 
-    public function delete()
-    {
-        $school = School::find($this->schoolIdToDelete);
-        $school->delete();
-
-        $this->toast()->success('Successo', 'Escola excluída com sucesso!')->send();
-        $this->confirmingDelete = false;
-        $this->schoolIdToDelete = null;
-        $this->schools = School::orderBy('priority_level', 'asc')->get(); 
+            $this->toast()->success('Sucesso', 'Escola excluída com sucesso!')->send();
+            $this->schools = School::orderBy('priority_level', 'asc')->get();
+        }
     }
 
     public function render()

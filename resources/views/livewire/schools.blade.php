@@ -1,7 +1,7 @@
 <div class="p-6">
     <h2 class="text-lg font-semibold mb-4">Gerir Escolas</h2>
 
-    <!-- Formulário para adicionar escola -->
+    <!-- Formulário para adicionar ou editar escola -->
     <form wire:submit.prevent="store" class="mb-6 space-y-4">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Nome da Escola -->
@@ -26,15 +26,11 @@
             </div>
         </div>
 
-        <x-ts-button type="submit" class="mt-4">Salvar Escola</x-ts-button>
+        <!-- Botão de Salvar Escola -->
+        <x-ts-button type="submit" class="mt-4">
+            Salvar Escola
+        </x-ts-button>
     </form>
-
-    <!-- Mensagens de Sucesso -->
-    @if (session()->has('success'))
-        <div class="bg-green-100 text-green-700 px-4 py-2 rounded-md mb-4">
-            {{ session('success') }}
-        </div>
-    @endif
 
     <!-- Tabela de Escolas -->
     <div>
@@ -78,8 +74,3 @@
         </table>
     </div>
 </div>
-
-<!-- Script para incluir FontAwesome (se necessário para os ícones) -->
-@push('scripts')
-    <script src="https://kit.fontawesome.com/a076d05399.js"></script>
-@endpush
