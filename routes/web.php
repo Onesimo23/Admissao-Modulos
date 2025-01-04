@@ -13,6 +13,8 @@ use App\Livewire\CandidateIdRecovery;
 use App\Livewire\PaymentGuideLookup;
 use App\Livewire\RegistrationStatusLookup;
 use App\Livewire\Schools;
+use App\Livewire\ClassModels;
+
 
 Route::middleware('guest')->group(function () {
     Route::view('/','index')->name('index');
@@ -34,8 +36,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
 	Route::get('enrollment/download', [PaymentController::class, 'downloadReference'])->name('enrollment.download');
 	Route::get('enrollment/confimation', [PaymentController::class, 'downloadConfirmation'])->name('enrollment.confirmation');
     Route::get('/schools', Schools::class)->name('schools.index');
-	
-//Route::get('/profile', Profile\Index::class)->name('profile');
+	Route::get('/salas', ClassModels::class)->name('class-models');
+
+	//Route::get('/profile', Profile\Index::class)->name('profile');
 
 });
 

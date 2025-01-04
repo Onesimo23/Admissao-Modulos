@@ -8,14 +8,11 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class ClassModel extends Model
 {
-    use HasFactory, HasUuids;
+    use HasFactory;
 
     protected $guarded = [];
+    protected $fillable = ['name', 'capacity', 'status', 'school_id'];
 
-    public function uniqueIds()
-    {
-        return ['uuid'];
-    }
     public function school()
     {
         return $this->belongsTo(School::class);
