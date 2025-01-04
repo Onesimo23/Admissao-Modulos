@@ -31,9 +31,8 @@ class Schools extends Component
     {
         $this->validate();
 
-        // Criar ou editar a escola no banco de dados
         if ($this->editing) {
-            $school = School::find($this->schoolIdToDelete); // Encontrar a escola pelo ID
+            $school = School::find($this->schoolIdToDelete); 
             $school->update([
                 'name' => $this->name,
                 'priority_level' => $this->priority_level,
@@ -47,10 +46,10 @@ class Schools extends Component
 
         $this->toast()->success('Successo', 'Escola cadastrada com sucesso!')->send();
         $this->resetForm();
-        $this->schools = School::orderBy('priority_level', 'asc')->get(); // Atualiza a lista de escolas
+        $this->schools = School::orderBy('priority_level', 'asc')->get(); 
     }
 
-    // Função para editar a escola
+    
     public function edit($id)
     {
         $this->editing = true;
@@ -60,21 +59,18 @@ class Schools extends Component
         $this->schoolIdToDelete = $id;
     }
 
-    // Função para confirmar exclusão
     public function confirmDelete($id)
     {
         $this->confirmingDelete = true;
         $this->schoolIdToDelete = $id;
     }
 
-    // Função para cancelar a exclusão
     public function cancelDelete()
     {
         $this->confirmingDelete = false;
         $this->schoolIdToDelete = null;
     }
 
-    // Função para excluir a escola
     public function delete()
     {
         $school = School::find($this->schoolIdToDelete);
@@ -83,7 +79,7 @@ class Schools extends Component
         $this->toast()->success('Successo', 'Escola excluída com sucesso!')->send();
         $this->confirmingDelete = false;
         $this->schoolIdToDelete = null;
-        $this->schools = School::orderBy('priority_level', 'asc')->get(); // Atualiza a lista de escolas
+        $this->schools = School::orderBy('priority_level', 'asc')->get(); 
     }
 
     public function render()
@@ -91,7 +87,6 @@ class Schools extends Component
         return view('livewire.schools');
     }
 
-    // Resetar o formulário após o processo
     private function resetForm()
     {
         $this->editing = false;
