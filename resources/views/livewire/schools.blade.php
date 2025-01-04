@@ -27,7 +27,6 @@
         </div>
 
         <x-ts-button type="submit" class="mt-4">
-            <!-- Condicional para alterar o texto do botão durante o processo de envio ou edição -->
             @if($editing)
                 Editar
             @else
