@@ -21,6 +21,19 @@
                 />
                 @error('school_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
+             <!-- Nível de Prioridade -->
+             <div>
+                <x-ts-select.styled
+                    label="Nível de Prioridade"
+                    :options="[ 
+                        ['label' => 'Alto', 'value' => 1],
+                        ['label' => 'Baixo', 'value' => 2],
+                    ]"
+                    select="label:label|value:value"
+                    wire:model.defer="priority_level"
+                />
+                @error('priority_level') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+            </div>
             <div>
                 <x-ts-checkbox label="Ativa" wire:model.defer="status" />
                 @error('status') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
@@ -40,6 +53,7 @@
                 <th class="py-3 px-4">Capacidade</th>
                 <th class="py-3 px-4">Status</th>
                 <th class="py-3 px-4">Escola</th>
+                <th class="py-2 px-4">Nível de Prioridade</th>
                 <th class="py-3 px-4">Ações</th>
             </tr>
         </thead>
@@ -55,6 +69,15 @@
                         </span>
                     </td>
                     <td class="py-3 px-4">{{ $room->school->name }}</td>
+                    <td class="py-2 px-4">
+                            @if ($room->priority_level === 1)
+                                Alto
+                            @elseif ($room->priority_level === 2)
+                            Baixo
+                            @else
+                                Baixo
+                            @endif
+                        </td>
                     <td class="py-3 px-4 space-x-2 flex justify-center items-center">
                         <!-- Botão Editar -->
                         <button wire:click="edit({{ $room->id }})" class="text-blue-500 hover:text-blue-700">

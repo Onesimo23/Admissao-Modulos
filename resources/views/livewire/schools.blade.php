@@ -16,8 +16,7 @@
                     label="Nível de Prioridade"
                     :options="[ 
                         ['label' => 'Alto', 'value' => 1],
-                        ['label' => 'Normal', 'value' => 2],
-                        ['label' => 'Baixo', 'value' => 3],
+                        ['label' => 'Baixo', 'value' => 2],
                     ]"
                     select="label:label|value:value"
                     wire:model.defer="priority_level"
@@ -63,10 +62,8 @@
                         <td class="py-2 px-4">
                             @if ($school->priority_level === 1)
                                 Alto
-                            @elseif ($school->priority_level === 2)
-                                Normal
-                            @else
-                                Baixo
+                            @else ($school->priority_level === 2)
+                            Baixo
                             @endif
                         </td>
                         <td class="py-2 px-4">{{ $school->province->name }}</td>

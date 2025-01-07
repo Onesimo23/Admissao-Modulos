@@ -13,10 +13,11 @@ return new class extends Migration
     {
         Schema::create('class_models', function (Blueprint $table) {
                     $table->id();
+                    $table->foreignId('school_id')->constrained();
                     $table->string('name');
                     $table->integer('capacity');
+                    $table->integer('priority_level');
                     $table->boolean('status')->default(true);
-                    $table->foreignId('school_id')->constrained();
                     $table->timestamps();
                 });
             }

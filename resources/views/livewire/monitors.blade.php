@@ -13,7 +13,6 @@
             <!-- Email -->
             <div>
                 <x-ts-input label="Email" wire:model.defer="email" placeholder="Insira o email do monitor" />
-                <small class="text-gray-500">Apenas emails institucionais (@unisave.ac.mz) são aceitos.</small>
                 @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
 
@@ -26,27 +25,23 @@
             <!-- Escola -->
             <div>
                 <x-ts-select.styled
-                    wire:model.live="school_id"
                     label="Escola"
                     :options="$schools->map(fn($school) => ['label' => $school->name, 'value' => $school->id])->toArray()"
                     select="label:label|value:value"
-                    placeholder="Selecione uma escola" />
+                    wire:model="school_id" />
                 @error('school_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
 
+            <!-- Sala -->
             <div>
                 <x-ts-select.styled
-                    wire:model.live="room_id"
-                    label="Sala *"
+                    label="Sala"
                     :options="$rooms->map(fn($room) => ['label' => $room->name, 'value' => $room->id])->toArray()"
                     select="label:label|value:value"
-                    placeholder="Selecione uma sala"
-                    :disabled="empty($rooms)"
-                    searchable />
+                    wire:model.defer="room_id"
+                    :disabled="!$school_id" />
                 @error('room_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
-
-
 
             <!-- Status -->
             <div>
@@ -72,7 +67,6 @@
                 <th class="py-3 px-4">E-mail</th>
                 <th class="py-3 px-4">Telefone</th>
                 <th class="py-3 px-4">Escola</th>
-                <th class="py-3 px-4">Sala</th>
                 <th class="py-3 px-4">Ações</th>
             </tr>
         </thead>
@@ -84,15 +78,13 @@
                 <td class="py-3 px-4">{{ $monitor->email }}</td>
                 <td class="py-3 px-4">{{ $monitor->phone }}</td>
                 <td class="py-3 px-4">{{ $monitor->school->name }}</td>
-                <td class="py-3 px-4">{{ $monitor->room->name }}</td>
                 <td class="py-3 px-4 space-x-2 flex justify-center items-center">
                     <button wire:click="edit({{ $monitor->id }})" class="text-blue-500 hover:text-blue-700">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button wire:click.prevent="delete({{ $monitor->id }})" class="text-red-500 hover:text-red-700">
+                    <button wire:click="delete({{ $monitor->id }})" class="text-red-500 hover:text-red-700">
                         <i class="fas fa-trash-alt"></i>
                     </button>
-
                 </td>
             </tr>
             @endforeach
