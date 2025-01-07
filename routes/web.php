@@ -14,6 +14,8 @@ use App\Livewire\PaymentGuideLookup;
 use App\Livewire\RegistrationStatusLookup;
 use App\Livewire\Schools;
 use App\Livewire\ClassModels;
+use App\Livewire\Monitors;
+
 
 
 Route::middleware('guest')->group(function () {
@@ -37,6 +39,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 	Route::get('enrollment/confimation', [PaymentController::class, 'downloadConfirmation'])->name('enrollment.confirmation');
     Route::get('/schools', Schools::class)->name('schools.index');
 	Route::get('/salas', ClassModels::class)->name('class-models');
+	Route::get('/monitores', Monitors::class)->name('monitors.index');
 
 	//Route::get('/profile', Profile\Index::class)->name('profile');
 

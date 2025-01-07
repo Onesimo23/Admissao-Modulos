@@ -306,7 +306,7 @@
 							</div>							
 							<div class="space-y-2">
 								<dt class="text-sm font-medium text-gray-500 dark:text-gray-400">Residência</dt>
-								<dd class="text-sm text-gray-800 dark:text-gray-100">{{ Auth::user()->candidate->marital_status ?? '-' }}</dd>
+								<dd class="text-sm text-gray-800 dark:text-gray-100">{{ Auth::user()->candidate->province->name ?? '-' }}</dd>
 							</div>	
 						</dl>
 					</div>
