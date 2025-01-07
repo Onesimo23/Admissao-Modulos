@@ -13,6 +13,7 @@
             <!-- Email -->
             <div>
                 <x-ts-input label="Email" wire:model.defer="email" placeholder="Insira o email do monitor" />
+                <small class="text-gray-500">Apenas emails institucionais (@unisave.ac.mz) são aceitos.</small>
                 @error('email') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
 
@@ -40,10 +41,9 @@
                     :options="$rooms->map(fn($room) => ['label' => $room->name, 'value' => $room->id])->toArray()"
                     select="label:label|value:value"
                     placeholder="Selecione uma sala"
-                    :disabled="empty($rooms)" 
-                    searchable
-                    />
-                    @error('room_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                    :disabled="empty($rooms)"
+                    searchable />
+                @error('room_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
 
 
@@ -89,9 +89,10 @@
                     <button wire:click="edit({{ $monitor->id }})" class="text-blue-500 hover:text-blue-700">
                         <i class="fas fa-edit"></i>
                     </button>
-                    <button wire:click="delete({{ $monitor->id }})" class="text-red-500 hover:text-red-700">
+                    <button wire:click.prevent="delete({{ $monitor->id }})" class="text-red-500 hover:text-red-700">
                         <i class="fas fa-trash-alt"></i>
                     </button>
+
                 </td>
             </tr>
             @endforeach
