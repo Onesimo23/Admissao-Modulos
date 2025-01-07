@@ -24,6 +24,17 @@
                 />
                 @error('priority_level') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
+
+            <!-- Província -->
+            <div>
+                <x-ts-select.styled
+                    label="Província"
+                    :options="$provinces->map(fn($province) => ['label' => $province->name, 'value' => $province->id])->toArray()"
+                    select="label:label|value:value"
+                    wire:model.defer="province_id"
+                />
+                @error('province_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+            </div>
         </div>
 
         <!-- Botão de Salvar Escola -->
@@ -40,6 +51,7 @@
                     <th class="py-2 px-4">#</th>
                     <th class="py-2 px-4">Nome</th>
                     <th class="py-2 px-4">Nível de Prioridade</th>
+                    <th class="py-2 px-4">Província</th>
                     <th class="py-2 px-4">Ações</th>
                 </tr>
             </thead>
@@ -57,6 +69,7 @@
                                 Baixo
                             @endif
                         </td>
+                        <td class="py-2 px-4">{{ $school->province->name }}</td>
                         <td class="py-2 px-4 flex space-x-2">
                             <!-- Botão Editar -->
                             <button wire:click="edit({{ $school->id }})" class="text-blue-500 hover:text-blue-700">

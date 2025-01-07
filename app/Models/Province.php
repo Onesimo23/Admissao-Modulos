@@ -25,4 +25,9 @@ class Province extends Model
     {
         return $this->hasMany(Juri::class);
     }
+
+    public function schools()
+    {
+        return $this->hasMany(School::class);
+    }
 }

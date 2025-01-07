@@ -26,7 +26,7 @@ class Monitors extends Component
 
     protected $rules = [
         'name' => 'required|string|max:255',
-        'email' => 'required|email|unique:monitors,email|regex:/^[\w\.-]+@unisave\.ac\.mz$/',
+        'email' => 'required|email|unique:monitors,email',
         'phone' => 'nullable|string|max:15',
         'status' => 'required|boolean',
         'school_id' => 'required|exists:schools,id',
@@ -35,37 +35,28 @@ class Monitors extends Component
 
     public function mount()
     {
-        $this->loadData();
-    }
-
-    public function loadData()
-    {
-        $this->monitors = Monitor::with(['room', 'school'])->get(); 
+        $this->monitors = Monitor::with('room', 'room.school')->get(); 
         $this->schools = School::all(); 
         $this->rooms = collect(); 
     }
 
     public function updatedSchoolId($value)
     {
-        $this->rooms = collect(); 
-    
         if ($value) {
+            // Carregar salas associadas à escola selecionada
             $this->rooms = ClassModel::where('school_id', $value)
                 ->where('status', true)
                 ->get();
+        } else {
+            $this->rooms = collect();
         }
+        $this->room_id = null; // Resetar a sala selecionada
     }
 
     public function store()
     {
-        $rules = $this->rules;
-     
-        if ($this->editing) {
-            $rules['email'] = 'required|email|regex:/^[\w\.-]+@unisave\.ac\.mz$/|unique:monitors,email,' . $this->monitorId;
-        }
-    
-        $this->validate($rules);
-    
+        $this->validate();
+
         if ($this->editing) {
             $monitor = Monitor::findOrFail($this->monitorId);
             $monitor->update([
@@ -76,7 +67,7 @@ class Monitors extends Component
                 'school_id' => $this->school_id,
                 'room_id' => $this->room_id,
             ]);
-    
+
             $this->toast()->success('Sucesso', 'Monitor atualizado com sucesso!')->send();
         } else {
             Monitor::create([
@@ -87,46 +78,12 @@ class Monitors extends Component
                 'school_id' => $this->school_id,
                 'room_id' => $this->room_id,
             ]);
-    
+
             $this->toast()->success('Sucesso', 'Monitor cadastrado com sucesso!')->send();
         }
-    
+
         $this->resetForm();
-        $this->loadData();
-    }
-    
-
-    public function edit($id)
-    {
-        $monitor = Monitor::findOrFail($id);
-
-        $this->editing = true;
-        $this->monitorId = $monitor->id;
-        $this->name = $monitor->name;
-        $this->email = $monitor->email;
-        $this->phone = $monitor->phone;
-        $this->status = $monitor->status;
-        $this->school_id = $monitor->school_id;
-
-        // Carregar salas associadas à escola
-        $this->rooms = ClassModel::where('school_id', $monitor->school_id)
-            ->where('status', true)
-            ->get();
-        $this->room_id = $monitor->room_id;
-    }
-
-    public function delete($id)
-    {
-        $monitor = Monitor::findOrFail($id);
-
-        try {
-            $monitor->delete();
-            $this->toast()->success('Sucesso', 'Monitor excluído com sucesso!')->send();
-        } catch (\Exception $e) {
-            $this->toast()->error('Erro', 'Não foi possível excluir o monitor.')->send();
-        }
-
-        $this->loadData();
+        $this->monitors = Monitor::with('room', 'room.school')->get();
     }
 
     public function resetForm()
@@ -143,6 +100,6 @@ class Monitors extends Component
 
     public function render()
     {
-        return view('livewire.monitors')->withErrors(session()->get('errors'));
+        return view('livewire.monitors');
     }
 }

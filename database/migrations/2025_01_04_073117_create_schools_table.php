@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name')->unique();
             $table->integer('priority_level');
+            $table->foreignId('province_id')->constrained();
             $table->timestamps();
         });
     }
