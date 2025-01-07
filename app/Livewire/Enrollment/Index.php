@@ -215,8 +215,7 @@ class Index extends Component
 
 		if ($value) {
 			// Buscar regimes disponíveis para esta universidade
-			$this->availableRegimes = Regime::where('id', '>', 1)->whereHas('universityCourses', function ($query) use ($value) {
-				$query->where('university_id', $value);
+			$this->availableRegimes = Regime::whereHas('universityCourses', function ($query) use ($value) {				$query->where('university_id', $value);
 			})
 			->orderBy('name')
 			->get()
@@ -456,14 +455,14 @@ class Index extends Component
 				//'gender_name',
 				//'marital_status_name',
 				//'pre_university_type_name'
-			))->layout('layouts.enroll');
+			))->with('layout', 'layouts.enroll');
 		} else {
 
 			return view('livewire.enrollment', compact(
 				'query3',
 				'query4',
 				'query5',
-			))->layout('layouts.enroll');
+			))->with('layout', 'layouts.enroll');
 		}			
     }
 }

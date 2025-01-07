@@ -54,6 +54,7 @@ class CandidateDashboard extends Component
     public $availableRegimes = [];
     public $availableCourses = [];
     public $showLocalExam = false;
+    public $universities = [];
 	
     public $nationalityOptions 				= [];
     public $genderOptions 					= [];
@@ -295,7 +296,7 @@ class CandidateDashboard extends Component
 
         if ($value) {
             // Buscar regimes disponíveis para esta universidade
-            $this->availableRegimes = Regime::where('id', '>', 1)->whereHas('universityCourses', function ($query) use ($value) {
+            $this->availableRegimes = Regime::whereHas('universityCourses', function ($query) use ($value) {
                 $query->where('university_id', $value);
             })
             ->orderBy('name')
