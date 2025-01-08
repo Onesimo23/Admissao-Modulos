@@ -3,8 +3,6 @@
 namespace App\Livewire;
 
 use App\Models\Monitor;
-use App\Models\School;
-use App\Models\ClassModel;
 use Livewire\Component;
 use TallStackUi\Traits\Interactions;
 
@@ -13,14 +11,10 @@ class Monitors extends Component
     use Interactions;
 
     public $monitors;
-    public $schools;
-    public $rooms = []; 
     public $name;
     public $email;
     public $phone;
     public $status = true;
-    public $school_id;
-    public $room_id; 
     public $editing = false;
     public $monitorId;
 
@@ -29,32 +23,19 @@ class Monitors extends Component
         'email' => 'required|email|unique:monitors,email',
         'phone' => 'nullable|string|max:15',
         'status' => 'required|boolean',
-        'school_id' => 'required|exists:schools,id',
-        'room_id' => 'required|exists:class_models,id',
     ];
 
     public function mount()
     {
-        $this->monitors = Monitor::with('room', 'room.school')->get(); 
-        $this->schools = School::all(); 
-        $this->rooms = collect(); 
-    }
-
-    public function updatedSchoolId($value)
-    {
-        if ($value) {
-            // Carregar salas associadas à escola selecionada
-            $this->rooms = ClassModel::where('school_id', $value)
-                ->where('status', true)
-                ->get();
-        } else {
-            $this->rooms = collect();
-        }
-        $this->room_id = null; // Resetar a sala selecionada
+        $this->monitors = Monitor::all();
     }
 
     public function store()
     {
+        if ($this->editing) {
+            $this->rules['email'] = 'required|email|unique:monitors,email,' . $this->monitorId;
+        }
+
         $this->validate();
 
         if ($this->editing) {
@@ -64,8 +45,6 @@ class Monitors extends Component
                 'email' => $this->email,
                 'phone' => $this->phone,
                 'status' => $this->status,
-                'school_id' => $this->school_id,
-                'room_id' => $this->room_id,
             ]);
 
             $this->toast()->success('Sucesso', 'Monitor atualizado com sucesso!')->send();
@@ -75,15 +54,34 @@ class Monitors extends Component
                 'email' => $this->email,
                 'phone' => $this->phone,
                 'status' => $this->status,
-                'school_id' => $this->school_id,
-                'room_id' => $this->room_id,
             ]);
 
             $this->toast()->success('Sucesso', 'Monitor cadastrado com sucesso!')->send();
         }
 
         $this->resetForm();
-        $this->monitors = Monitor::with('room', 'room.school')->get();
+        $this->monitors = Monitor::all();
+    }
+
+    public function edit($id)
+    {
+        $monitor = Monitor::findOrFail($id);
+        $this->monitorId = $monitor->id;
+        $this->name = $monitor->name;
+        $this->email = $monitor->email;
+        $this->phone = $monitor->phone;
+        $this->status = $monitor->status;
+        $this->editing = true;
+        $this->rules['email'] = 'required|email|unique:monitors,email,' . $this->monitorId;
+    }
+
+    public function delete($id)
+    {
+        $monitor = Monitor::findOrFail($id);
+        $monitor->delete();
+
+        $this->toast()->success('Sucesso', 'Monitor deletado com sucesso!')->send();
+        $this->monitors = Monitor::all();
     }
 
     public function resetForm()
@@ -93,9 +91,9 @@ class Monitors extends Component
         $this->email = '';
         $this->phone = '';
         $this->status = true;
-        $this->school_id = null;
-        $this->room_id = null;
-        $this->rooms = collect();
+
+        // Restaure as regras de validação padrão
+        $this->rules['email'] = 'required|email|unique:monitors,email';
     }
 
     public function render()

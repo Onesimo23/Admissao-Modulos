@@ -455,14 +455,14 @@ class Index extends Component
 				//'gender_name',
 				//'marital_status_name',
 				//'pre_university_type_name'
-			))->with('layout', 'layouts.enroll');
-		} else {
+				))->layout('layouts.enroll');
+			} else {
 
 			return view('livewire.enrollment', compact(
 				'query3',
 				'query4',
 				'query5',
-			))->with('layout', 'layouts.enroll');
-		}			
+				))->layout('layouts.enroll');
+			}			
     }
 }

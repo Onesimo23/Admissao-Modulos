@@ -13,8 +13,6 @@ return new class extends Migration
     {
         Schema::create('monitors', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('room_id')->constrained('class_models')->cascadeOnDelete(); 
-            $table->foreignId('school_id')->constrained();
             $table->string('name');
             $table->string('phone');
             $table->string('email')->unique();
