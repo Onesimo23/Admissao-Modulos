@@ -10,18 +10,11 @@ class Monitor extends Model
     use HasFactory;
 
     protected $guarded = [];
-    protected $fillable = ['name', 'email', 'phone', 'status', 'school_id', 'room_id'];
+    protected $fillable = ['name', 'email', 'phone', 'status'];
 
-    public function school()
-    {
-        return $this->belongsTo(School::class);
-    } 
-    public function juris()
-    {
-        return $this->belongsToMany(Juri::class, 'juri_has_monitors');
-    }
-    public function room()
-    {
-        return $this->belongsTo(ClassModel::class);
-    }
+    // Remova o relacionamento com Juri
+    // public function juris()
+    // {
+    //     return $this->belongsToMany(Juri::class, 'juri_has_monitors');
+    // }
 }
