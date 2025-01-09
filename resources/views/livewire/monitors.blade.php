@@ -22,7 +22,6 @@
                 @error('phone') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
 
-           
             <!-- Status -->
             <div>
                 <x-ts-toggle wire:model.defer="status" label="Ativo" />

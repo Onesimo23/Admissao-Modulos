@@ -16,6 +16,7 @@ use App\Livewire\Schools;
 use App\Livewire\ClassModels;
 use App\Livewire\Monitors;
 use App\Livewire\JuriDistribution;
+use App\Livewire\Disciplines;
 
 
 Route::middleware('guest')->group(function () {
@@ -40,6 +41,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/schools', Schools::class)->name('schools.index');
 	Route::get('/salas', ClassModels::class)->name('class-models');
 	Route::get('/monitores', Monitors::class)->name('monitors.index');
+	Route::get('/disciplines', Disciplines::class)->name('disciplines.index');
+
 	Route::get('/juris/distribution', JuriDistribution::class)->name('juris.distribution');
 
 	//Route::get('/profile', Profile\Index::class)->name('profile');
