@@ -9,24 +9,21 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('juris', function (Blueprint $table) {
+        Schema::create('disciplinas', function (Blueprint $table) {
             $table->id();
             $table->string('name');
-            $table->foreignId('class_models_id')->constrained();
-            $table->foreignId('disciplina_id')->constrained();
-            $table->foreignId('province_id')->constrained();
+            $table->foreignId('course_id')->constrained();
             $table->timestamps();
         });
     }
-    
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('juris');
+        Schema::dropIfExists('disciplinas');
     }
 };
