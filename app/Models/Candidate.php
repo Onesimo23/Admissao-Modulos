@@ -50,7 +50,11 @@ class Candidate extends Model
 	public function localExam()
 	{
 		return $this->belongsTo(Province::class, 'local_exam');
-	}	
+	}
+	public function getProvince()
+	{
+    	return Province::where('name', $this->local_exam)->first();
+	}
 	public function allocations()
     {
         return $this->hasMany(Allocation::class);

@@ -9,23 +9,22 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('schools', function (Blueprint $table) {
+        Schema::create('juris', function (Blueprint $table) {
             $table->id();
-            $table->string('name')->unique();
-            $table->integer('priority_level');
-            $table->foreignId('province_id')->constrained();
+            $table->string('name');
+            $table->foreignId('disciplina_id')->constrained('disciplinas')->onDelete('cascade');
+            $table->foreignId('school_id')->constrained('schools')->onDelete('cascade');
             $table->timestamps();
         });
     }
-    
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('schools');
+        Schema::dropIfExists('juris');
     }
 };

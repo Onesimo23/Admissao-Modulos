@@ -8,36 +8,29 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Juri extends Model
 {
-    use HasFactory, HasUuids;
+    use HasFactory;
 
     protected $guarded = [];
 
-    public function uniqueIds()
+
+    public function school()
     {
-        return ['uuid'];
-    }
-    public function class()
-    {
-        return $this->belongsTo(ClassModel::class);
+        return $this->belongsTo(School::class);
     }
 
-    public function province()
+    public function room()
     {
-        return $this->belongsTo(Province::class);
+        return $this->belongsTo(Room::class);
     }
 
-    public function courses()
+    public function juryDistributions()
     {
-        return $this->belongsToMany(Course::class, 'juri_has_courses');
+        return $this->hasMany(JuryDistribution::class);
+    }
+    // No modelo Juri
+    public function disciplina()
+    {
+        return $this->belongsTo(Disciplina::class);
     }
 
-    public function monitors()
-    {
-        return $this->belongsToMany(Monitor::class, 'juri_has_monitors');
-    }
-
-    public function allocations()
-    {
-        return $this->hasMany(Allocation::class);
-    }
 }

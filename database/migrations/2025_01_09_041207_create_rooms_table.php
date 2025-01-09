@@ -11,14 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('disciplines', function (Blueprint $table) {
+        Schema::create('rooms', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('courses_id')->constrained();
-            $table->string('discipline1');
-            $table->string('discipline2');
-            $table->integer('pesodiscipline1');
-            $table->integer('pesodiscipline2');
+            $table->string('name'); // Nome da sala (ex.: "Sala 101")
+            $table->unsignedBigInteger('school_id'); // Escola a que pertence
+            $table->integer('capacity');
             $table->timestamps();
+
+            $table->foreign('school_id')->references('id')->on('schools')->onDelete('cascade');
         });
     }
 
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('disciplines');
+        Schema::dropIfExists('rooms');
     }
 };

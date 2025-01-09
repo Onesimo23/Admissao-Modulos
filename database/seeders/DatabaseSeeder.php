@@ -15,10 +15,15 @@ class DatabaseSeeder extends Seeder
     {
         $this->call(RegimesSeeder::class);
 		$this->call(ProvincesSeeder::class);		
-		$this->call(UniversitiesSeeder::class);
+		$this->call(UniversitiesSeeder::class);    
+        // $this->call(DisciplinasTableSeeder::class);
 		$this->call(CoursesSeeder::class);
 		$this->call(UniversityCoursesSeeder::class);
 		$this->call(SpecialNeedsSeeder::class);
+        // $this->call(UsersTableSeeder::class);
+        // $this->call(CandidatesTableSeeder::class);
+        // $this->call(SchoolsTableSeeder::class);
+        // $this->call(RoomsTableSeeder::class);
 		// User::factory(10)->create();
 
         //User::factory()->create([

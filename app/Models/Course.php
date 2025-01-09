@@ -30,4 +30,12 @@ class Course extends Model
     {
         return $this->belongsToMany(Juri::class, 'juri_has_courses');
     }
+
+    // No modelo Course
+    public function disciplina()
+    {
+        return $this->hasOne(Disciplina::class);
+    }
+
+
 }

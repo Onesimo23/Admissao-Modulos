@@ -13,13 +13,18 @@ class School extends Model
     protected $fillable = ['name', 'priority_level', 'province_id'];
     protected $guarded = [];
 
-    public function classes()
-    {
-        return $this->hasMany(ClassModel::class);
-    }
-
     public function province()
     {
         return $this->belongsTo(Province::class);
+    }
+
+    public function rooms()
+    {
+        return $this->hasMany(Room::class);
+    }
+
+    public function juries()
+    {
+        return $this->hasMany(Juri::class);
     }
 }
