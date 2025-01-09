@@ -30,4 +30,9 @@ class Course extends Model
     {
         return $this->belongsToMany(Juri::class, 'juri_has_courses');
     }
+    public function disciplines()
+{
+    return $this->hasMany(Discipline::class, 'courses_id');
+}
+
 }
