@@ -19,8 +19,8 @@ class Disciplines extends Component
         'disciplina2' => 'required|string|max:255',
         'peso1'       => 'required|integer|min:1|max:100',
         'peso2'       => 'required|integer|min:0|max:100',
-        'horario_disciplina1' => 'required|date',
-        'horario_disciplina2' => 'required|date',
+        'horario_disciplina1' => 'required|date_format:Y-m-d\TH:i',
+        'horario_disciplina2' => 'required|date_format:Y-m-d\TH:i',
         'course_id'   => 'required|exists:courses,id',
     ];
 
@@ -80,8 +80,8 @@ class Disciplines extends Component
         $this->disciplina2 = $discipline->disciplina2;
         $this->peso1 = $discipline->peso1;
         $this->peso2 = $discipline->peso2;
-        $this->horario_disciplina1 = $discipline->horario_disciplina1;
-        $this->horario_disciplina2 = $discipline->horario_disciplina2;
+        $this->horario_disciplina1 = $discipline->horario_disciplina1->format('Y-m-d\TH:i');
+        $this->horario_disciplina2 = $discipline->horario_disciplina2->format('Y-m-d\TH:i');
         $this->course_id = $discipline->course_id;
         $this->isEditing = true;
     }

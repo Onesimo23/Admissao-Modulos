@@ -45,52 +45,8 @@
     </form>
 
     <!-- Tabela de Salas -->
-    <table class="min-w-full bg-white rounded-md shadow-md border border-gray-200">
-        <thead class="bg-gray-200 text-center">
-            <tr>
-                <th class="py-3 px-4">#</th>
-                <th class="py-3 px-4">Nome</th>
-                <th class="py-3 px-4">Capacidade</th>
-                <th class="py-3 px-4">Status</th>
-                <th class="py-3 px-4">Escola</th>
-                <th class="py-2 px-4">Nível de Prioridade</th>
-                <th class="py-3 px-4">Ações</th>
-            </tr>
-        </thead>
-        <tbody class="text-center">
-            @foreach($classModels as $room)
-                <tr class="border-t hover:bg-gray-100">
-                    <td class="py-3 px-4">{{ $loop->iteration }}</td>
-                    <td class="py-3 px-4">{{ $room->name }}</td>
-                    <td class="py-3 px-4">{{ $room->capacity }}</td>
-                    <td class="py-3 px-4">
-                        <span class="{{ $room->status ? 'text-green-600' : 'text-red-600' }}">
-                            {{ $room->status ? 'Ativa' : 'Inativa' }}
-                        </span>
-                    </td>
-                    <td class="py-3 px-4">{{ $room->school->name }}</td>
-                    <td class="py-2 px-4">
-                            @if ($room->priority_level === 1)
-                                Alto
-                            @elseif ($room->priority_level === 2)
-                            Baixo
-                            @else
-                                Baixo
-                            @endif
-                        </td>
-                    <td class="py-3 px-4 space-x-2 flex justify-center items-center">
-                        <!-- Botão Editar -->
-                        <button wire:click="edit({{ $room->id }})" class="text-blue-500 hover:text-blue-700">
-                            <i class="fas fa-edit"></i>
-                        </button>
-
-                        <!-- Botão Excluir -->
-                        <button wire:click="delete({{ $room->id }})" class="text-red-500 hover:text-red-700">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>
-                    </td>
-                </tr>
-            @endforeach
-        </tbody>
-    </table>
+    <div>
+        <x-ts-table :headers="$headers" :rows="$rows->items()" filter   :quantity="[2, 5, 10]" />
+        {{ $rows->links() }}
+    </div>
 </div>
