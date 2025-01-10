@@ -5,13 +5,14 @@ namespace App\Livewire;
 use App\Models\Room;
 use App\Models\School;
 use Livewire\Component;
+use Livewire\WithPagination;
 use TallStackUi\Traits\Interactions;
+use Illuminate\Database\Eloquent\Builder;
 
 class Rooms extends Component
 {
-    use Interactions;
+    use Interactions, WithPagination;
 
-    public $classModels;
     public $schools;
     public $name;
     public $capacity;
@@ -20,7 +21,8 @@ class Rooms extends Component
     public $editing = false;
     public $classModelId;
     public $priority_level;
-
+    public ?int $quantity = 10;
+    public ?string $search = null;
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -32,8 +34,17 @@ class Rooms extends Component
 
     public function mount()
     {
-        $this->classModels = Room::with('school')->get();
         $this->schools = School::all();
+    }
+
+    public function updatingQuantity()
+    {
+        $this->resetPage();
+    }
+
+    public function updatingSearch()
+    {
+        $this->resetPage();
     }
 
     public function store()
@@ -62,7 +73,6 @@ class Rooms extends Component
         }
 
         $this->resetForm();
-        $this->classModels = Room::with('school')->get();
     }
 
     public function edit($id)
@@ -81,7 +91,6 @@ class Rooms extends Component
     {
         Room::findOrFail($id)->delete();
         $this->toast()->success('Sucesso', 'Sala excluída com sucesso!')->send();
-        $this->classModels = Room::with('school')->get();
     }
 
     private function resetForm()
@@ -96,7 +105,24 @@ class Rooms extends Component
 
     public function render()
     {
-        return view('livewire.class-models');
+        $rooms = Room::query()
+            ->with('school')
+            ->when($this->search, function (Builder $query) {
+                return $query->where('name', 'like', "%{$this->search}%");
+            })
+            ->paginate($this->quantity);
+
+        return view('livewire.class-models', [
+            'headers' => [
+                ['index' => 'id', 'label' => '#'],
+                ['index' => 'name', 'label' => 'Nome'],
+                ['index' => 'capacity', 'label' => 'Capacidade'],
+                ['index' => 'status', 'label' => 'Status'],
+                ['index' => 'school.name', 'label' => 'Escola'],
+                ['index' => 'priority_level', 'label' => 'Nível de Prioridade'],
+            ],
+            'rows' => $rooms,
+        ]);
     }
 }
 
