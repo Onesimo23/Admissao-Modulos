@@ -43,6 +43,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 	Route::get('/monitores', Monitors::class)->name('monitors.index');
 	Route::get('/disciplines', Disciplines::class)->name('disciplines.index');
 	Route::get('/jury-distributions', JuriDistribution::class)->name('jury.distributions');
+	Route::post('/distribute-juris', [JuriDistribution::class, 'distribute'])->name('distribute');
 
 	//Route::get('/profile', Profile\Index::class)->name('profile');
 

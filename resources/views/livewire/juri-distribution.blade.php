@@ -1,4 +1,8 @@
 <div>
+        <div>
+            <x-ts-button wire:click="distribute">Distribuir Júris</x-ts-button>
+        </div>
+
     <form wire:submit.prevent="store" class="mb-6 space-y-4">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Província -->
@@ -16,7 +20,7 @@
             <div>
                 <x-ts-select.styled
                     label="Disciplina"
-                    :options="$disciplines->map(fn($d) => ['label' => $d->disciplina1 . ' / ' . $d->disciplina2, 'value' => $d->id])->toArray()"
+                    :options="$allDisciplines"
                     select="label:label|value:value"
                     wire:model.live="selectedDiscipline"
                 />
@@ -34,51 +38,50 @@
                 />
                 @error('selectedJury') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
-
-            <!-- Botão -->
-            <div>
-                <button type="submit" class="btn btn-primary" @if(!$selectedProvince || !$selectedDiscipline) disabled @endif>
-                    Salvar Seleção
-                </button>
-            </div>
         </div>
     </form>
-<!-- Exibir a lista de candidatos para o júri selecionado em uma tabela -->
-@if($selectedJury && $candidates->isNotEmpty())
-    <div class="mt-6">
-        <h3 class="text-lg font-semibold mb-4">Candidatos para o Júri Selecionado:</h3>
-        <div class="overflow-x-auto">
-            <table class="min-w-full bg-white shadow-sm rounded-lg">
-                <thead class="bg-gray-50">
-                    <tr>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
-                        <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Curso</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-200">
-                    @foreach($candidates as $candidate)
+
+    <!-- Exibir a lista de candidatos para o júri selecionado em uma tabela -->
+    @if($selectedJury && $candidates->isNotEmpty())
+        <div class="mt-6">
+            <h3 class="text-lg font-semibold mb-4">Candidatos para o Júri Selecionado:</h3>
+            <div class="overflow-x-auto">
+                <table class="min-w-full bg-white shadow-sm rounded-lg">
+                    <thead class="bg-gray-50">
                         <tr>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $candidate->id }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $candidate->name }}
-                            </td>
-                            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                {{ $candidate->course->name ?? 'N/A' }}
-                            </td>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Curso</th>
+                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Disciplina</th>
                         </tr>
-                    @endforeach
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody class="divide-y divide-gray-200">
+                        @foreach($candidates as $candidate)
+                            <tr>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ $candidate->id }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ $candidate->name }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ $candidate->course->name ?? 'N/A' }}
+                                </td>
+                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                    {{ $selectedDiscipline }}
+                                </td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
         </div>
-    </div>
-@elseif($selectedJury)
-    <div class="mt-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg">
-        Nenhum candidato encontrado para este júri.
-    </div>
-@endif
+    @elseif($selectedJury)
+        <div class="mt-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg">
+            Nenhum candidato encontrado para este júri.
+        </div>
+    @endif
+
     <!-- Mensagens de feedback -->
     @if (session()->has('message'))
         <div class="alert alert-success mt-4">

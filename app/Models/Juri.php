@@ -33,4 +33,8 @@ class Juri extends Model
         return $this->belongsTo(Disciplina::class);
     }
 
+    public function monitors()
+    {
+        return $this->belongsToMany(Monitor::class, 'juri_monitor');
+    }
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace App\Livewire;
 
 use Livewire\Component;
@@ -8,103 +7,111 @@ use App\Models\Province;
 use App\Models\Disciplina;
 use App\Models\Juri;
 use App\Models\Candidate;
+use Illuminate\Support\Collection;
+use App\Services\JuryDistributionService;
 use Illuminate\Support\Facades\Log;
 
 class JuriDistribution extends Component
 {
-    public $provinces = [];
-    public $disciplines = [];
-    public $juris = [];
     public $selectedProvince = null;
     public $selectedDiscipline = null;
     public $selectedJury = null;
-    public $candidates = [];
+    public $provinces;
+    public $juris;
+    public $candidates;
+    public $allDisciplines = [];
 
     public function mount()
     {
-        // Carregar as províncias e disciplinas
         $this->provinces = Province::all();
-        $this->disciplines = Disciplina::all();
-        $this->juris = collect(); // Inicializa como Collection vazia
+        $this->loadAllDisciplines();
+        $this->juris = collect();
+        $this->candidates = collect();
     }
 
-    public function updatedSelectedProvince()
+    private function loadAllDisciplines()
     {
-        // Atualizar os júris quando a província for selecionada
-        $this->updateJuris();
+        // Carrega todas as disciplinas únicas (disciplina1 e disciplina2)
+        $disciplinas = Disciplina::all();
+        $allDisciplines = new Collection();
+
+        foreach ($disciplinas as $disciplina) {
+            $allDisciplines->push([
+                'label' => $disciplina->disciplina1,
+                'value' => $disciplina->disciplina1
+            ]);
+            $allDisciplines->push([
+                'label' => $disciplina->disciplina2,
+                'value' => $disciplina->disciplina2
+            ]);
+        }
+
+        // Remove duplicatas e ordena
+        $this->allDisciplines = $allDisciplines->unique('value')
+            ->sortBy('label')
+            ->values()
+            ->toArray();
     }
 
-    public function updatedSelectedDiscipline()
+    public function updatedSelectedProvince($value)
     {
-        // Atualizar os júris quando a disciplina for selecionada
-        $this->updateJuris();
+        $this->selectedJury = null;
+        $this->updateJurisList();
     }
 
-    public function updatedSelectedJury()
+    public function updatedSelectedDiscipline($value)
     {
-        // Quando um júri for selecionado, carregar os candidatos
-        $this->loadCandidates();
+        $this->selectedJury = null;
+        $this->updateJurisList();
     }
 
-    protected function updateJuris()
+    private function updateJurisList()
     {
         if ($this->selectedProvince && $this->selectedDiscipline) {
-            // Adicione um log para debug
-            Log::info('Buscando júris:', [
-                'provincia' => $this->selectedProvince,
-                'disciplina' => $this->selectedDiscipline
-            ]);
-
-            $this->juris = Juri::with('school')
-                ->whereHas('school', function ($query) {
+            // Busca júris baseado no nome da disciplina e província
+            $this->juris = Juri::query()
+                ->where('name', 'LIKE', '%' . $this->selectedDiscipline . '%')
+                ->whereHas('room.school', function ($query) {
                     $query->where('province_id', $this->selectedProvince);
                 })
-                ->where('disciplina_id', $this->selectedDiscipline)
                 ->get();
 
-            // Log do resultado
+            // Debug
+            Log::info('Query Júris', [
+                'província' => $this->selectedProvince,
+                'disciplina' => $this->selectedDiscipline,
+                'quantidade_juris' => $this->juris->count()
+            ]);
         } else {
             $this->juris = collect();
         }
-
-        // Resetar o júri selecionado quando mudar província ou disciplina
-        $this->selectedJury = null;
     }
 
-    protected function loadCandidates()
+    public function updatedSelectedJury($value)
     {
-        if ($this->selectedJury) {
-            // Busca os candidatos através da tabela de distribuição
-            $this->candidates = Candidate::whereHas('juryDistributions', function ($query) {
-                $query->where('juri_id', $this->selectedJury)
-                    ->where('disciplina_id', $this->selectedDiscipline);
-            })->get();
+        if ($value) {
+            $this->loadCandidates();
         } else {
             $this->candidates = collect();
         }
     }
 
-    public function store()
+    private function loadCandidates()
     {
-        // Validação com mensagens em português
-        $this->validate([
-            'selectedProvince' => 'required|numeric',
-            'selectedDiscipline' => 'required|numeric',
-            'selectedJury' => 'required|numeric'
-        ], [
-            'selectedProvince.required' => 'Por favor, selecione uma província',
-            'selectedDiscipline.required' => 'Por favor, selecione uma disciplina',
-            'selectedJury.required' => 'Por favor, selecione um júri'
-        ]);
-
-        try {
-            // Lógica de salvamento aqui
-            session()->flash('message', 'Distribuição salva com sucesso!');
-        } catch (\Exception $e) {
-            session()->flash('error', 'Erro ao salvar a distribuição.');
+        if ($this->selectedJury) {
+            $this->candidates = Candidate::whereHas('juryDistributions', function ($query) {
+                $query->where('juri_id', $this->selectedJury);
+            })->get();
         }
     }
 
+    public function distribute()
+    {
+        $distributionService = new JuryDistributionService();
+        $distributionService->distribute();
+        
+        session()->flash('message', 'Distribuição de júris realizada com sucesso!');
+    }
 
     public function render()
     {
