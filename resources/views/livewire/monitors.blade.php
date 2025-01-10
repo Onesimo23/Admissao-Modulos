@@ -22,6 +22,17 @@
                 @error('phone') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
 
+            <div>
+                <x-ts-select.styled
+                    label="Provincia"
+                    :options="$provinces->map(fn($province) => ['label' => $province->name, 'value' => $province->id])->toArray()"
+                    select="label:label|value:value"
+                    wire:model.defer="province_id"
+                    searchable
+                />
+                @error('province_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+            </div>
+
             <!-- Status -->
             <div>
                 <x-ts-toggle wire:model.defer="status" label="Ativo" />

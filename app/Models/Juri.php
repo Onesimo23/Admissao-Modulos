@@ -33,8 +33,14 @@ class Juri extends Model
         return $this->belongsTo(Disciplina::class);
     }
 
+    // Em App\Models\Juri.php
     public function monitors()
     {
-        return $this->belongsToMany(Monitor::class, 'juri_monitor');
+        return $this->belongsToMany(Monitor::class, 'juri_monitor', 'juri_id', 'monitor_id');
+    }
+
+    public function province()
+    {
+        return $this->school->province_id; // Obtém a província via school
     }
 }

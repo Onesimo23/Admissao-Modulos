@@ -9,24 +9,22 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up()
+    public function up(): void
     {
-        Schema::create('monitors', function (Blueprint $table) {
+        Schema::create('juri_monitor', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('province_id')->constrained();
-            $table->string('name');
-            $table->string('phone');
-            $table->string('email')->unique();
-            $table->boolean('status')->default(true);
+            $table->foreignId('juri_id')->constrained('juris')->onDelete('cascade');
+            $table->foreignId('monitor_id')->constrained('monitors')->onDelete('cascade');
             $table->timestamps();
         });
+        
     }
-    
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('monitors');
+        Schema::dropIfExists('juri_monitor');
     }
 };

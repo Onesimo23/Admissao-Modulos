@@ -10,11 +10,11 @@ class Monitor extends Model
     use HasFactory;
 
     protected $guarded = [];
-    protected $fillable = ['name', 'email', 'phone', 'status'];
+    protected $fillable = ['name', 'email', 'phone', 'status', 'province_id'];
 
-    // Remova o relacionamento com Juri
-    // public function juris()
-    // {
-    //     return $this->belongsToMany(Juri::class, 'juri_has_monitors');
-    // }
+    // Em App\Models\Monitor.php
+    public function juris()
+    {
+        return $this->belongsToMany(Juri::class, 'juri_monitor', 'monitor_id', 'juri_id');
+    }
 }
