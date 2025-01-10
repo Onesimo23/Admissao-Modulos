@@ -9,26 +9,26 @@
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
             <!-- Disciplina 1 -->
             <div>
-                <x-ts-input label="Disciplina 1" wire:model.defer="discipline1" placeholder="Insira o nome da disciplina 1" />
-                @error('discipline1') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <x-ts-input label="Disciplina 1" wire:model.defer="disciplina1" placeholder="Insira o nome da disciplina 1" />
+                @error('disciplina1') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
 
             <!-- Disciplina 2 -->
             <div>
-                <x-ts-input label="Disciplina 2" wire:model.defer="discipline2" placeholder="Insira o nome da disciplina 2" />
-                @error('discipline2') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <x-ts-input label="Disciplina 2" wire:model.defer="disciplina2" placeholder="Insira o nome da disciplina 2" />
+                @error('disciplina2') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
 
             <!-- Peso Disciplina 1 -->
             <div>
-                <x-ts-input label="Peso Disciplina 1" type="number" wire:model="pesodiscipline1" placeholder="Insira o peso da disciplina 1" />
-                @error('pesodiscipline1') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <x-ts-input label="Peso Disciplina 1" type="number" wire:model="peso1" placeholder="Insira o peso da disciplina 1" />
+                @error('peso1') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
 
             <!-- Peso Disciplina 2 -->
             <div>
-                <x-ts-input label="Peso Disciplina 2" type="number" wire:model="pesodiscipline2" placeholder="Será preenchido automaticamente com base na escolha do peso da disciplina 1" readonly />
-                @error('pesodiscipline2') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                <x-ts-input label="Peso Disciplina 2" type="number" wire:model="peso2" placeholder="Será preenchido automaticamente" readonly />
+                @error('peso2') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
 
             <!-- Curso -->
@@ -37,18 +37,18 @@
                     label="Curso"
                     :options="$courses->map(fn($course) => ['label' => $course->name, 'value' => $course->id])->toArray()"
                     select="label:label|value:value"
-                    wire:model.defer="courses_id"
+                    wire:model.defer="course_id"
                     searchable
                 />
-                @error('courses_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+                @error('course_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
         </div>
 
         <x-ts-button type="submit" class="mt-4">
             @if ($isEditing)
-            Atualizar Disciplina
+                Atualizar Disciplina
             @else
-            Salvar Disciplina
+                Salvar Disciplina
             @endif
         </x-ts-button>
         @if ($isEditing)
@@ -70,22 +70,22 @@
         </thead>
         <tbody class="text-center">
             @foreach($disciplines as $discipline)
-            <tr class="border-t hover:bg-gray-100">
-                <td class="py-3 px-4">{{ $loop->iteration }}</td>
-                <td class="py-3 px-4">{{ $discipline->discipline1 }}</td>
-                <td class="py-3 px-4">{{ $discipline->discipline2 }}</td>
-                <td class="py-3 px-4">{{ $discipline->pesodiscipline1 }}</td>
-                <td class="py-3 px-4">{{ $discipline->pesodiscipline2 }}</td>
-                <td class="py-3 px-4">{{ $discipline->course->name }}</td>
-                <td class="py-3 px-4 space-x-2 flex justify-center items-center">
-                    <button wire:click="edit({{ $discipline->id }})" class="text-blue-500 hover:text-blue-700">
-                        <i class="fas fa-edit"></i>
-                    </button>
-                    <button wire:click="delete({{ $discipline->id }})" class="text-red-500 hover:text-red-700">
-                        <i class="fas fa-trash-alt"></i>
-                    </button>
-                </td>
-            </tr>
+                <tr class="border-t hover:bg-gray-100">
+                    <td class="py-3 px-4">{{ $loop->iteration }}</td>
+                    <td class="py-3 px-4">{{ $discipline->disciplina1 }}</td>
+                    <td class="py-3 px-4">{{ $discipline->disciplina2 }}</td>
+                    <td class="py-3 px-4">{{ $discipline->peso1 }}</td>
+                    <td class="py-3 px-4">{{ $discipline->peso2 }}</td>
+                    <td class="py-3 px-4">{{ $discipline->course->name }}</td>
+                    <td class="py-3 px-4 space-x-2 flex justify-center items-center">
+                        <button wire:click="edit({{ $discipline->id }})" class="text-blue-500 hover:text-blue-700">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button wire:click="delete({{ $discipline->id }})" class="text-red-500 hover:text-red-700">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </td>
+                </tr>
             @endforeach
         </tbody>
     </table>

@@ -14,10 +14,10 @@ return new class extends Migration
         Schema::create('disciplinas', function (Blueprint $table) {
             $table->id(); 
             $table->foreignId('course_id')->constrained('courses')->onDelete('cascade');  
-            $table->string('disciplina1'); // Primeira disciplina
-            $table->string('disciplina2'); // Segunda disciplina
-            $table->integer('peso1')->default(1); // Peso da primeira disciplina
-            $table->integer('peso2')->default(1);       
+            $table->string('disciplina1'); 
+            $table->string('disciplina2'); 
+            $table->integer('peso1'); 
+            $table->integer('peso2');       
             $table->timestamps();
         });   
     }
