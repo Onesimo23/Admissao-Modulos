@@ -2,7 +2,7 @@
 
 namespace App\Livewire;
 
-use App\Models\Discipline;
+use App\Models\Disciplina;
 use App\Models\Course;
 use Livewire\Component;
 use TallStackUi\Traits\Interactions;
@@ -11,15 +11,15 @@ class Disciplines extends Component
 {
     use Interactions;
 
-    public $disciplines, $courses, $disciplineId, $discipline1, $discipline2, $pesodiscipline1, $pesodiscipline2, $courses_id;
+    public $disciplines, $courses, $disciplineId, $disciplina1, $disciplina2, $peso1, $peso2, $course_id;
     public $isEditing = false;
 
     protected $rules = [
-        'discipline1' => 'required|string|max:255',
-        'discipline2' => 'required|string|max:255',
-        'pesodiscipline1' => 'required|integer|min:1|max:100',
-        'pesodiscipline2' => 'required|integer|min:0|max:100',
-        'courses_id' => 'required|exists:courses,id',
+        'disciplina1' => 'required|string|max:255',
+        'disciplina2' => 'required|string|max:255',
+        'peso1'       => 'required|integer|min:1|max:100',
+        'peso2'       => 'required|integer|min:0|max:100',
+        'course_id'  => 'required|exists:courses,id',
     ];
 
     public function mount()
@@ -28,23 +28,23 @@ class Disciplines extends Component
         $this->loadDisciplines();
     }
 
-    public function updatedPesodiscipline1()
+    public function updatedPeso1()
     {
-        $this->pesodiscipline2 = 100 - $this->pesodiscipline1;
+        $this->peso2 = 100 - $this->peso1;
     }
 
     public function loadDisciplines()
     {
-        $this->disciplines = Discipline::with('course')->get();
+        $this->disciplines = Disciplina::with('course')->get();
     }
 
     public function resetFields()
     {
-        $this->discipline1 = '';
-        $this->discipline2 = '';
-        $this->pesodiscipline1 = '';
-        $this->pesodiscipline2 = '';
-        $this->courses_id = '';
+        $this->disciplina1 = '';
+        $this->disciplina2 = '';
+        $this->peso1 = '';
+        $this->peso2 = '';
+        $this->course_id = '';
         $this->disciplineId = null;
         $this->isEditing = false;
     }
@@ -53,12 +53,12 @@ class Disciplines extends Component
     {
         $this->validate();
 
-        Discipline::create([
-            'discipline1' => $this->discipline1,
-            'discipline2' => $this->discipline2,
-            'pesodiscipline1' => $this->pesodiscipline1,
-            'pesodiscipline2' => $this->pesodiscipline2,
-            'courses_id' => $this->courses_id,
+        Disciplina::create([
+            'disciplina1' => $this->disciplina1,
+            'disciplina2' => $this->disciplina2,
+            'peso1' => $this->peso1,
+            'peso2' => $this->peso2,
+            'course_id' => $this->course_id,
         ]);
 
         $this->toast()->success('Sucesso', 'Disciplina criada com sucesso!')->send();
@@ -68,13 +68,13 @@ class Disciplines extends Component
 
     public function edit($id)
     {
-        $discipline = Discipline::findOrFail($id);
+        $discipline = Disciplina::findOrFail($id);
         $this->disciplineId = $discipline->id;
-        $this->discipline1 = $discipline->discipline1;
-        $this->discipline2 = $discipline->discipline2;
-        $this->pesodiscipline1 = $discipline->pesodiscipline1;
-        $this->pesodiscipline2 = $discipline->pesodiscipline2;
-        $this->courses_id = $discipline->courses_id;
+        $this->disciplina1 = $discipline->disciplina1;
+        $this->disciplina2 = $discipline->disciplina2;
+        $this->peso1 = $discipline->peso1;
+        $this->peso2 = $discipline->peso2;
+        $this->course_id = $discipline->course_id;
         $this->isEditing = true;
     }
 
@@ -82,13 +82,13 @@ class Disciplines extends Component
     {
         $this->validate();
 
-        $discipline = Discipline::findOrFail($this->disciplineId);
+        $discipline = Disciplina::findOrFail($this->disciplineId);
         $discipline->update([
-            'discipline1' => $this->discipline1,
-            'discipline2' => $this->discipline2,
-            'pesodiscipline1' => $this->pesodiscipline1,
-            'pesodiscipline2' => $this->pesodiscipline2,
-            'courses_id' => $this->courses_id,
+            'disciplina1' => $this->disciplina1,
+            'disciplina2' => $this->disciplina2,
+            'peso1' => $this->peso1,
+            'peso2' => $this->peso2,
+            'course_id' => $this->course_id,
         ]);
 
         $this->toast()->success('Sucesso', 'Disciplina atualizada com sucesso!')->send();
@@ -98,7 +98,7 @@ class Disciplines extends Component
 
     public function delete($id)
     {
-        Discipline::findOrFail($id)->delete();
+        Disciplina::findOrFail($id)->delete();
         $this->toast()->success('Sucesso', 'Disciplina excluída com sucesso!')->send();
         $this->loadDisciplines();
     }

@@ -9,18 +9,22 @@ class Disciplina extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name'];
+    protected $fillable = [
+        'course_id',
+        'disciplina1',
+        'disciplina2',
+        'peso1',
+        'peso2',
+    ];
 
     public function examSchedules()
     {
         return $this->hasMany(ExamSchedule::class);
     }
-    // No modelo Disciplina
-    // No modelo Disciplina
-    public function course()
-    {
-        return $this->belongsTo(Course::class);
+    
+        public function course()
+        {
+            return $this->belongsTo(Course::class);
+        }
     }
 
-
-}
