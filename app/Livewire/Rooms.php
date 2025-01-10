@@ -2,12 +2,12 @@
 
 namespace App\Livewire;
 
-use App\Models\ClassModel;
+use App\Models\Room;
 use App\Models\School;
 use Livewire\Component;
 use TallStackUi\Traits\Interactions;
 
-class ClassModels extends Component
+class Rooms extends Component
 {
     use Interactions;
 
@@ -32,7 +32,7 @@ class ClassModels extends Component
 
     public function mount()
     {
-        $this->classModels = ClassModel::with('school')->get();
+        $this->classModels = Room::with('school')->get();
         $this->schools = School::all();
     }
 
@@ -41,7 +41,7 @@ class ClassModels extends Component
         $this->validate();
 
         if ($this->editing) {
-            $classModel = ClassModel::findOrFail($this->classModelId);
+            $classModel = Room::findOrFail($this->classModelId);
             $classModel->update([
                 'name' => $this->name,
                 'capacity' => $this->capacity,
@@ -51,7 +51,7 @@ class ClassModels extends Component
             ]);
             $this->toast()->success('Sucesso', 'Sala atualizada com sucesso!')->send();
         } else {
-            ClassModel::create([
+            Room::create([
                 'name' => $this->name,
                 'capacity' => $this->capacity,
                 'status' => $this->status,
@@ -62,13 +62,13 @@ class ClassModels extends Component
         }
 
         $this->resetForm();
-        $this->classModels = ClassModel::with('school')->get();
+        $this->classModels = Room::with('school')->get();
     }
 
     public function edit($id)
     {
         $this->editing = true;
-        $classModel = ClassModel::findOrFail($id);
+        $classModel = Room::findOrFail($id);
         $this->classModelId = $id;
         $this->name = $classModel->name;
         $this->capacity = $classModel->capacity;
@@ -79,9 +79,9 @@ class ClassModels extends Component
 
     public function delete($id)
     {
-        ClassModel::findOrFail($id)->delete();
+        Room::findOrFail($id)->delete();
         $this->toast()->success('Sucesso', 'Sala excluída com sucesso!')->send();
-        $this->classModels = ClassModel::with('school')->get();
+        $this->classModels = Room::with('school')->get();
     }
 
     private function resetForm()

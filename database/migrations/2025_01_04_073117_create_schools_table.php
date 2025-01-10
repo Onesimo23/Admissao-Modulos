@@ -9,15 +9,17 @@ return new class extends Migration
     /**
      * Run the migrations.
      */
-    public function up(): void
+    public function up()
     {
         Schema::create('schools', function (Blueprint $table) {
             $table->id();
-            $table->string('name');
-            $table->foreignId('province_id')->constrained('provinces')->onDelete('cascade');
+            $table->string('name')->unique();
+            $table->integer('priority_level');
+            $table->foreignId('province_id')->constrained();
             $table->timestamps();
         });
     }
+    
 
     /**
      * Reverse the migrations.

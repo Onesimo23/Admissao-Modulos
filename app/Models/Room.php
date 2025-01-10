@@ -9,7 +9,8 @@ class Room extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'school_id', 'capacity'];
+    protected $guarded = [];
+    protected $fillable = ['name', 'capacity', 'status', 'school_id', 'priority_level'];
 
     public function school()
     {
