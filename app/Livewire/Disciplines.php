@@ -11,7 +11,7 @@ class Disciplines extends Component
 {
     use Interactions;
 
-    public $disciplines, $courses, $disciplineId, $disciplina1, $disciplina2, $peso1, $peso2, $course_id;
+    public $disciplines, $courses, $disciplineId, $disciplina1, $disciplina2, $peso1, $peso2, $horario_disciplina1, $horario_disciplina2, $course_id;
     public $isEditing = false;
 
     protected $rules = [
@@ -19,7 +19,9 @@ class Disciplines extends Component
         'disciplina2' => 'required|string|max:255',
         'peso1'       => 'required|integer|min:1|max:100',
         'peso2'       => 'required|integer|min:0|max:100',
-        'course_id'  => 'required|exists:courses,id',
+        'horario_disciplina1' => 'required|date',
+        'horario_disciplina2' => 'required|date',
+        'course_id'   => 'required|exists:courses,id',
     ];
 
     public function mount()
@@ -44,6 +46,8 @@ class Disciplines extends Component
         $this->disciplina2 = '';
         $this->peso1 = '';
         $this->peso2 = '';
+        $this->horario_disciplina1 = '';
+        $this->horario_disciplina2 = '';
         $this->course_id = '';
         $this->disciplineId = null;
         $this->isEditing = false;
@@ -58,6 +62,8 @@ class Disciplines extends Component
             'disciplina2' => $this->disciplina2,
             'peso1' => $this->peso1,
             'peso2' => $this->peso2,
+            'horario_disciplina1' => $this->horario_disciplina1,
+            'horario_disciplina2' => $this->horario_disciplina2,
             'course_id' => $this->course_id,
         ]);
 
@@ -74,6 +80,8 @@ class Disciplines extends Component
         $this->disciplina2 = $discipline->disciplina2;
         $this->peso1 = $discipline->peso1;
         $this->peso2 = $discipline->peso2;
+        $this->horario_disciplina1 = $discipline->horario_disciplina1;
+        $this->horario_disciplina2 = $discipline->horario_disciplina2;
         $this->course_id = $discipline->course_id;
         $this->isEditing = true;
     }
@@ -88,6 +96,8 @@ class Disciplines extends Component
             'disciplina2' => $this->disciplina2,
             'peso1' => $this->peso1,
             'peso2' => $this->peso2,
+            'horario_disciplina1' => $this->horario_disciplina1,
+            'horario_disciplina2' => $this->horario_disciplina2,
             'course_id' => $this->course_id,
         ]);
 
