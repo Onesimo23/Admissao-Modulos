@@ -15,6 +15,8 @@ class Disciplina extends Model
         'disciplina2',
         'peso1',
         'peso2',
+        'horario_disciplina1',
+        'horario_disciplina2',
     ];
 
     public function examSchedules()
@@ -22,9 +24,9 @@ class Disciplina extends Model
         return $this->hasMany(ExamSchedule::class);
     }
     
-        public function course()
-        {
-            return $this->belongsTo(Course::class);
-        }
+    public function course()
+    {
+        return $this->belongsTo(Course::class);
     }
+}
 

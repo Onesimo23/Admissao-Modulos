@@ -17,11 +17,16 @@ return new class extends Migration
             $table->string('disciplina1'); 
             $table->string('disciplina2'); 
             $table->integer('peso1'); 
-            $table->integer('peso2');       
+            $table->integer('peso2'); 
+            $table->datetime('horario_disciplina1')->nullable(false);
+            $table->datetime('horario_disciplina2')->nullable(false);                
             $table->timestamps();
         });   
     }
 
+    /**
+     * Reverse the migrations.
+     */
     public function down(): void
     {
         Schema::dropIfExists('disciplinas');

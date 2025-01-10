@@ -13,10 +13,22 @@
                 @error('disciplina1') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
 
+            <!-- Horário Disciplina 1 -->
+            <div>
+                <x-ts-input label="Horário Disciplina 1" type="datetime-local" wire:model.defer="horario_disciplina1" />
+                @error('horario_disciplina1') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+            </div>
+
             <!-- Disciplina 2 -->
             <div>
                 <x-ts-input label="Disciplina 2" wire:model.defer="disciplina2" placeholder="Insira o nome da disciplina 2" />
                 @error('disciplina2') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
+            </div>
+
+            <!-- Horário Disciplina 2 -->
+            <div>
+                <x-ts-input label="Horário Disciplina 2" type="datetime-local" wire:model.defer="horario_disciplina2" />
+                @error('horario_disciplina2') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
 
             <!-- Peso Disciplina 1 -->
@@ -61,7 +73,9 @@
             <tr>
                 <th class="py-3 px-4">#</th>
                 <th class="py-3 px-4">Disciplina 1</th>
+                <th class="py-3 px-4">Horário Disciplina 1</th>
                 <th class="py-3 px-4">Disciplina 2</th>
+                <th class="py-3 px-4">Horário Disciplina 2</th>
                 <th class="py-3 px-4">Peso 1</th>
                 <th class="py-3 px-4">Peso 2</th>
                 <th class="py-3 px-4">Curso</th>
@@ -73,7 +87,9 @@
                 <tr class="border-t hover:bg-gray-100">
                     <td class="py-3 px-4">{{ $loop->iteration }}</td>
                     <td class="py-3 px-4">{{ $discipline->disciplina1 }}</td>
+                    <td class="py-3 px-4">{{ $discipline->horario_disciplina1 }}</td>
                     <td class="py-3 px-4">{{ $discipline->disciplina2 }}</td>
+                    <td class="py-3 px-4">{{ $discipline->horario_disciplina2 }}</td>
                     <td class="py-3 px-4">{{ $discipline->peso1 }}</td>
                     <td class="py-3 px-4">{{ $discipline->peso2 }}</td>
                     <td class="py-3 px-4">{{ $discipline->course->name }}</td>
