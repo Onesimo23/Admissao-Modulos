@@ -13,8 +13,9 @@ class JuryDistribution extends Model
 
     public function jury()
     {
-        return $this->belongsTo(Juri::class);
+        return $this->belongsTo(Juri::class, 'juri_id');
     }
+    
     public function disciplina()
     {
         return $this->belongsTo(Disciplina::class);

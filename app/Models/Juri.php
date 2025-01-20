@@ -10,6 +10,8 @@ class Juri extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['name', 'disciplina_id', 'school_id'];
+
     protected $guarded = [];
 
 
@@ -27,13 +29,11 @@ class Juri extends Model
     {
         return $this->hasMany(JuryDistribution::class);
     }
-    // No modelo Juri
     public function disciplina()
     {
         return $this->belongsTo(Disciplina::class);
     }
 
-    // Em App\Models\Juri.php
     public function monitors()
     {
         return $this->belongsToMany(Monitor::class, 'juri_monitor', 'juri_id', 'monitor_id');
@@ -41,6 +41,6 @@ class Juri extends Model
 
     public function province()
     {
-        return $this->school->province_id; // Obtém a província via school
+        return $this->school->province_id; 
     }
 }
