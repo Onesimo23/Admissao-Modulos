@@ -17,6 +17,7 @@ use App\Livewire\Rooms;
 use App\Livewire\Monitors;
 use App\Livewire\JuriDistribution;
 use App\Livewire\Disciplines;
+use App\Livewire\SearchCandidateJury;
 
 
 Route::middleware('guest')->group(function () {
@@ -30,6 +31,7 @@ Route::middleware('guest')->group(function () {
 	Route::get('/estado-inscricao', RegistrationStatusLookup::class)->name('registration-status');
 	Route::get('/upload-payments', [PaymentUploadController::class, 'showUploadForm'])->name('upload.form');
 	Route::post('/upload-payments', [PaymentUploadController::class, 'uploadAndVerifyPayments'])->name('upload.payments');
+	Route::get('/consulta', SearchCandidateJury::class)->name('search.candidate.jury');
 
 
 Route::middleware(['auth', 'verified'])->group(function () {

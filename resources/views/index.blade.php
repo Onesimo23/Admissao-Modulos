@@ -161,6 +161,11 @@
 									Estado da Inscrição
 								</a>
 							</li>
+                            <li>
+								<a href="{{ route('search.candidate.jury') }}" class="block px-6 py-3 text-text hover:bg-gray-100 hover:text-primary transition duration-300 text-lg">
+                                    Consultar a sala
+								</a>
+							</li>
 						</ul>
 					</li>
                     <li><a href="#faq" class="nav-link text-text hover:text-primary">Perguntas Frequentes</a></li>

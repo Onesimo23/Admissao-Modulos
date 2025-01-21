@@ -66,29 +66,6 @@ class CandidateDashboard extends Component
 	public $editForm;
 	public $detailsForm;
 
-    // protected $rules = [
-    //     'surname' => 'required|string|max:255',
-    //     'name' => 'required|string|max:255',
-    //     'birthdate' => 'required|date',
-    //     'nationality' => 'required|string',
-    //     'gender' => 'required|string',
-    //     'marital_status' => 'required|string',
-    //     'province_id' => 'required|exists:provinces,id',
-    //     'special_need_id' => 'required|exists:special_needs,id',
-    //     'document_type' => 'required|string',
-    //     'document_number' => 'required|string|max:20',
-    //     'nuit' => 'required|string|max:15',
-    //     'cell1' => 'required|string|max:15',
-    //     'cell2' => 'nullable|string|max:15',
-    //     'email' => 'nullable|email|max:255',
-    //     'pre_university_type' => 'required|string',
-    //     'pre_university_year' => 'required|integer|min:1900|max:2024',
-    //     'university_id' => 'required|exists:universities,id',
-    //     'regime_id' => 'required|exists:regimes,id',
-    //     'course_id' => 'required|exists:courses,id',
-    //     'local_exam' => 'required_if:regime_id,1'
-    // ];
-	
     protected function rules()
     {
         $candidateId = $this->candidate->id;
@@ -136,8 +113,6 @@ class CandidateDashboard extends Component
 			'marital_status.string'           => 'O estado civil deve ser uma string.',
 			'province_id.required'            => 'A província é obrigatória.',
 			'province_id.exists'              => 'A província selecionada é inválida.',
-			//'province_district_id.required' => 'O distrito provincial é obrigatório.',
-			//'province_district_id.exists'   => 'O distrito provincial selecionado é inválido.',
 			'special_need_id.required'        => 'O tipo de necessidade especial é obrigatório.',
 			'special_need_id.exists'          => 'O tipo de necessidade especial selecionado é inválido.',
 			'document_type.required'          => 'O tipo de documento é obrigatório.',
@@ -158,10 +133,6 @@ class CandidateDashboard extends Component
 			'email.email'                     => 'O email deve ser um endereço de email válido.',
 			'pre_university_type.required'    => 'O tipo de pré-universitário é obrigatório.',
 			'pre_university_type.string'      => 'O tipo de pré-universitário deve ser uma string.',
-			//'pre_university_province_id.required' => 'A província do pré-universitário é obrigatória.',
-			//'pre_university_province_id.exists'   => 'A província do pré-universitário selecionada é inválida.',
-			//'pre_university_school_id.required' => 'A escola pré-universitária é obrigatória.',
-			//'pre_university_school_id.exists'   => 'A escola pré-universitária selecionada é inválida.',
 			'pre_university_year.required'    => 'O ano do pré-universitário é obrigatório.',
 			'pre_university_year.numeric'     => 'O ano do pré-universitário deve ser numérico.',
 			'pre_university_year.digits'      => 'O ano do pré-universitário deve ter exatamente 4 dígitos.',
@@ -180,7 +151,13 @@ class CandidateDashboard extends Component
     {
         $this->candidate = Auth::user()->candidate;
 		//$this->candidate = Candidate::where('user_id', Auth::id())->firstOrFail();
-		
+        $this->candidate = Auth::user()->candidate->load([
+            'course',
+            'province',
+            'juryDistributions.jury.room.school',
+            'juryDistributions.disciplina'
+        ]);
+        
 		$this->currentStep 		= 1; 	// Inicia na primeira etapa
         $this->availableCourses = []; 	// Inicializa como array vazio
         
@@ -215,30 +192,7 @@ class CandidateDashboard extends Component
 			['label' => '12ª - Grupo B (ou equivalente)', 'value' => '12ª - GRUPO B'],
 			['label' => '12ª - Grupo C (ou equivalente)', 'value' => '12ª - GRUPO C'],
 		];	
-		
-         //// For the select components that use database relations
-         //if ($this->province_id) {
-         //    $province = Province::find($this->province_id);
-         //    if ($province) {
-         //        $this->province_id = [
-         //            'label' => $province->name,
-         //            'value' => $province->id
-         //        ];
-         //    }
-         //}
-         //
-         //if ($this->special_need_id) {
-         //    $specialNeed = SpecialNeed::find($this->special_need_id);
-         //    if ($specialNeed) {
-         //        $this->special_need_id = [
-         //            'label' => $specialNeed->name,
-         //            'value' => $specialNeed->id
-         //        ];
-         //    }
-         //}		
 
-        
-        // Carregar as coleções para os selects
         $this->provinces = Province::orderBy('name')->get()->map(function ($province) {
             return ['label' => $province->name, 'value' => $province->id];
         });
@@ -276,12 +230,8 @@ class CandidateDashboard extends Component
             $this->cell1 				= $this->candidate->cell1;
             $this->cell2 				= $this->candidate->cell2;
             $this->email 				= $this->candidate->email;
-            //$this->pre_university_type 	= $this->candidate->pre_university_type;
             $this->pre_university_year 	= $this->candidate->pre_university_year;
-            //$this->university_id 		= $this->candidate->university_id;
-            //$this->regime_id 			= $this->candidate->regime_id;
-            //$this->course_id 			= $this->candidate->course_id;
-            //$this->local_exam 			= $this->candidate->local_exam;
+        
         }
     }
 
