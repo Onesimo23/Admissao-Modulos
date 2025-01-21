@@ -1,6 +1,9 @@
 <div>
-        <div>
+        <div class="flex space-x-4 mb-4">
             <x-ts-button wire:click="distribute">Distribuir Júris</x-ts-button>
+            <x-ts-button wire:click="exportPdf">
+                    Exportar Lista
+            </x-ts-button>
         </div>
 
     <form wire:submit.prevent="store" class="mb-6 space-y-4">
@@ -52,7 +55,6 @@
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
                             <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Curso</th>
-                            <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Disciplina</th>
                         </tr>
                     </thead>
                     <tbody class="divide-y divide-gray-200">
@@ -66,9 +68,6 @@
                                 </td>
                                 <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                     {{ $candidate->course->name ?? 'N/A' }}
-                                </td>
-                                <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                    {{ $selectedDiscipline }}
                                 </td>
                             </tr>
                         @endforeach

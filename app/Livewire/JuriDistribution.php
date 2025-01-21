@@ -10,6 +10,10 @@ use App\Models\Candidate;
 use Illuminate\Support\Collection;
 use App\Services\JuryDistributionService;
 use Illuminate\Support\Facades\Log;
+use Dompdf\Dompdf;
+use Dompdf\Options;
+use Illuminate\Support\Facades\View;
+use Carbon\Carbon;
 
 class JuriDistribution extends Component
 {
@@ -31,7 +35,6 @@ class JuriDistribution extends Component
 
     private function loadAllDisciplines()
     {
-        // Carrega todas as disciplinas únicas (disciplina1 e disciplina2)
         $disciplinas = Disciplina::all();
         $allDisciplines = new Collection();
 
@@ -46,7 +49,6 @@ class JuriDistribution extends Component
             ]);
         }
 
-        // Remove duplicatas e ordena
         $this->allDisciplines = $allDisciplines->unique('value')
             ->sortBy('label')
             ->values()
@@ -68,7 +70,6 @@ class JuriDistribution extends Component
     private function updateJurisList()
     {
         if ($this->selectedProvince && $this->selectedDiscipline) {
-            // Busca júris baseado no nome da disciplina e província
             $this->juris = Juri::query()
                 ->where('name', 'LIKE', '%' . $this->selectedDiscipline . '%')
                 ->whereHas('room.school', function ($query) {
@@ -76,7 +77,6 @@ class JuriDistribution extends Component
                 })
                 ->get();
 
-            // Debug
             Log::info('Query Júris', [
                 'província' => $this->selectedProvince,
                 'disciplina' => $this->selectedDiscipline,
@@ -109,9 +109,66 @@ class JuriDistribution extends Component
     {
         $distributionService = new JuryDistributionService();
         $distributionService->distribute();
-        
+
         session()->flash('message', 'Distribuição de júris realizada com sucesso!');
     }
+
+    public function exportPdf()
+    {
+        // Carregar os dados necessários
+        $jury = Juri::find($this->selectedJury);
+        $candidates = $this->candidates;
+
+        // Buscar a disciplina e os horários associados
+        $disciplina = Disciplina::where('disciplina1', $this->selectedDiscipline)
+            ->orWhere('disciplina2', $this->selectedDiscipline)
+            ->first();
+
+        // Inicializar as variáveis de data e horário
+        $data = 'Data não disponível';
+        $horarioDisciplina = 'Horário não disponível';
+        $horarioEntrada = 'Horário de entrada não disponível';
+
+        if ($disciplina) {
+            if ($disciplina->disciplina1 === $this->selectedDiscipline) {
+                $horarioCompleto = Carbon::parse($disciplina->horario_disciplina1);
+            } elseif ($disciplina->disciplina2 === $this->selectedDiscipline) {
+                $horarioCompleto = Carbon::parse($disciplina->horario_disciplina2);
+            }
+
+            if (isset($horarioCompleto)) {
+                $data = $horarioCompleto->format('d/m/Y');
+                $horarioDisciplina = $horarioCompleto->format('H:i:s');
+                $horarioEntrada = $horarioCompleto->addMinutes(30)->format('H:i:s');
+            }
+        }
+
+        // Configurar Dompdf
+        $options = new Options();
+        $options->set('isHtml5ParserEnabled', true);
+        $options->set('isRemoteEnabled', true);
+        $dompdf = new Dompdf($options);
+
+        // Renderizar a view para o PDF
+        $html = View::make('pdf.jury-list', [
+            'jury' => $jury,
+            'disciplinaNome' => $this->selectedDiscipline,
+            'data' => $data,
+            'horarioDisciplina' => $horarioDisciplina,
+            'horarioEntrada' => $horarioEntrada,
+            'candidates' => $candidates,
+        ])->render();
+
+        $dompdf->loadHtml($html);
+        $dompdf->setPaper('A4', 'portrait');
+        $dompdf->render();
+
+        // Retornar o PDF como download
+        return response()->streamDownload(function () use ($dompdf) {
+            echo $dompdf->output();
+        }, 'distribuicao_juri.pdf');
+    }
+
 
     public function render()
     {

@@ -26,7 +26,7 @@ class CandidateSeeder extends Seeder
         $courses = Course::all();
         $regime = Regime::where('name', 'Laboral')->first();
 
-        for ($i = 0; $i < 50; $i++) {
+        for ($i = 0; $i < 500; $i++) {
             $province = $provinces->random();
             $specialNeed = $specialNeeds->random();
             $university = $universities->random();

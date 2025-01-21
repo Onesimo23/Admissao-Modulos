@@ -12,6 +12,9 @@ use Illuminate\Support\Facades\DB;
 
 class JuryDistributionService
 {
+    private $roomSchedules = [];
+    private $roomOccupancy = [];
+
     public function distribute()
     {
         // Desabilitar temporariamente as verificações de chave estrangeira
@@ -24,11 +27,15 @@ class JuryDistributionService
         // Reabilitar as verificações de chave estrangeira
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
+        // Inicializar arrays de controle
+        $this->roomSchedules = [];
+        $this->roomOccupancy = [];
+
         // Filtrar candidatos com status = 1 e regime_id = 1
         $candidates = Candidate::where('status', 1)
                                ->where('regime_id', 1)
                                ->get()
-                               ->groupBy('local_exam'); // Agrupar por província
+                               ->groupBy('local_exam');
 
         foreach ($candidates as $provinceId => $provinceCandidates) {
             $province = Province::find($provinceId);
@@ -41,15 +48,18 @@ class JuryDistributionService
 
             if ($availableRooms->isEmpty()) continue;
 
+            // Inicializar controle para cada sala
+            foreach ($availableRooms as $room) {
+                $this->roomSchedules[$room->id] = [];
+                $this->roomOccupancy[$room->id] = [];
+            }
+
             // Agrupar candidatos por disciplina
             $candidatesByDiscipline = $this->groupCandidatesByDiscipline($provinceCandidates);
 
             // Distribuir candidatos por disciplina
             foreach ($candidatesByDiscipline as $disciplineName => $disciplineCandidates) {
-                // Ordenar candidatos por peso da disciplina (prioridade)
                 $sortedCandidates = $this->sortCandidatesByPriority($disciplineCandidates, $disciplineName);
-                
-                // Distribuir candidatos nas salas
                 $this->distributeCandidatesToRooms($sortedCandidates, $availableRooms, $disciplineName);
             }
         }
@@ -87,7 +97,6 @@ class JuryDistributionService
             $weightA = $a['is_disciplina1'] ? $a['disciplina']->peso1 : $a['disciplina']->peso2;
             $weightB = $b['is_disciplina1'] ? $b['disciplina']->peso1 : $b['disciplina']->peso2;
             
-            // Ordenar por peso (1 tem prioridade sobre 2)
             return $weightA - $weightB;
         })->values()->all();
     }
@@ -101,37 +110,104 @@ class JuryDistributionService
         foreach ($candidates as $candidateData) {
             $candidate = $candidateData['candidate'];
             $disciplina = $candidateData['disciplina'];
+            $isDisciplina1 = $candidateData['is_disciplina1'];
+            $examTime = $isDisciplina1 ? $disciplina->horario_disciplina1 : $disciplina->horario_disciplina2;
             
-            // Se não houver júri atual ou o júri atual estiver cheio, criar novo júri
-            if (!$currentJury || $this->isJuryFull($currentJury, $currentRoom)) {
-                // Se a sala atual estiver cheia, passar para próxima sala
-                if ($this->isJuryFull($currentJury, $currentRoom)) {
-                    $currentRoomIndex++;
-                    if ($currentRoomIndex >= count($rooms)) {
-                        // Não há mais salas disponíveis
-                        break;
-                    }
-                    $currentRoom = $rooms[$currentRoomIndex];
+            // Verificar se precisa criar novo júri ou mudar de sala
+            if (!$currentJury || $this->needsNewJury($currentRoom, $examTime)) {
+                // Procurar uma sala disponível que não tenha conflito de horário e capacidade
+                $availableRoom = $this->findAvailableRoom($rooms, $disciplina, $isDisciplina1);
+                
+                if (!$availableRoom) {
+                    // Não há salas disponíveis
+                    break;
                 }
-
+                
+                $currentRoom = $availableRoom;
                 $currentJury = $this->createJury($currentRoom, $disciplineName, $disciplina->id);
+                
+                // Registrar o horário e inicializar ocupação
+                $this->roomSchedules[$currentRoom->id][] = [
+                    'disciplina_id' => $disciplina->id,
+                    'exam_time' => $examTime,
+                    'jury_id' => $currentJury->id
+                ];
+
+                if (!isset($this->roomOccupancy[$currentRoom->id][$examTime])) {
+                    $this->roomOccupancy[$currentRoom->id][$examTime] = 0;
+                }
             }
 
-            // Criar distribuição do júri
+            // Verificar se ainda há espaço na sala para este horário
+            if ($this->roomOccupancy[$currentRoom->id][$examTime] >= $currentRoom->capacity) {
+                // Procurar nova sala
+                $availableRoom = $this->findAvailableRoom($rooms, $disciplina, $isDisciplina1);
+                if (!$availableRoom) {
+                    break;
+                }
+                $currentRoom = $availableRoom;
+                $currentJury = $this->createJury($currentRoom, $disciplineName, $disciplina->id);
+                
+                // Registrar novo horário e inicializar ocupação
+                $this->roomSchedules[$currentRoom->id][] = [
+                    'disciplina_id' => $disciplina->id,
+                    'exam_time' => $examTime,
+                    'jury_id' => $currentJury->id
+                ];
+                $this->roomOccupancy[$currentRoom->id][$examTime] = 0;
+            }
+
+            // Criar distribuição do júri e atualizar ocupação
             JuryDistribution::create([
                 'juri_id' => $currentJury->id,
                 'candidate_id' => $candidate->id,
                 'disciplina_id' => $disciplina->id
             ]);
+
+            $this->roomOccupancy[$currentRoom->id][$examTime]++;
         }
     }
 
-    private function isJuryFull($jury, $room)
+    private function needsNewJury($room, $examTime)
     {
-        if (!$jury) return false;
-        
-        $currentCount = JuryDistribution::where('juri_id', $jury->id)->count();
-        return $currentCount >= $room->capacity;
+        // Verifica se a sala já atingiu sua capacidade para este horário
+        return isset($this->roomOccupancy[$room->id][$examTime]) && 
+               $this->roomOccupancy[$room->id][$examTime] >= $room->capacity;
+    }
+
+    private function findAvailableRoom($rooms, $disciplina, $isDisciplina1)
+    {
+        $examTime = $isDisciplina1 ? $disciplina->horario_disciplina1 : $disciplina->horario_disciplina2;
+
+        foreach ($rooms as $room) {
+            // Verificar se a sala tem conflito de horário
+            if ($this->hasTimeConflict($room, $examTime)) {
+                continue;
+            }
+
+            // Verificar se a sala tem capacidade disponível
+            if (!isset($this->roomOccupancy[$room->id][$examTime]) || 
+                $this->roomOccupancy[$room->id][$examTime] < $room->capacity) {
+                return $room;
+            }
+        }
+        return null;
+    }
+
+    private function hasTimeConflict($room, $examTime)
+    {
+        if (!isset($this->roomSchedules[$room->id])) {
+            return false;
+        }
+
+        foreach ($this->roomSchedules[$room->id] as $schedule) {
+            if (date('Y-m-d H:i', strtotime($schedule['exam_time'])) === 
+                date('Y-m-d H:i', strtotime($examTime))) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private function createJury($room, $disciplineName, $disciplinaId)
@@ -139,7 +215,7 @@ class JuryDistributionService
         return Juri::create([
             'room_id' => $room->id,
             'disciplina_id' => $disciplinaId,
-            'name' => "Júri {$disciplineName} - Sala {$room->name}",
+            'name' => "Júri {$disciplineName} - {$room->name}",
             'school_id' => $room->school_id
         ]);
     }
