@@ -214,8 +214,10 @@
             --hover-color: #4792f5;
         }
     </style>
-
+<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <!-- Scripts -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
     <tallstackui:script />
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 </head>
@@ -225,11 +227,11 @@
 
     <div id="overlay" class="overlay"></div>
     <div class="flex h-auto">
-
+        
         <!-- Sidebar -->
         <aside id="sidebar" class="bg-indigo-800 text-white w-64 min-h-screen overflow-y-auto transition-all duration-300 ease-in-out">
             <div class="p-4">
-                <h3 class="text-md font-bold mb-5 sidebar-full text-center">MENU</h3>
+                <h3 class="text-md font-bold mb-5 sidebar-full text-center">UniSave</h3>
                 <hr class="mb-4">
                 <nav>
                     <ul class="space-y-2">

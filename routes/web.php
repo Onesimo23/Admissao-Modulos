@@ -20,6 +20,7 @@ use App\Livewire\JuriDistribution;
 use App\Livewire\Disciplines;
 use App\Livewire\SearchCandidateJury;
 use App\Livewire\Admin\Dashboard;
+use App\Models\Candidate;
 
 Route::middleware('guest')->group(function () {
 	Route::view('/', 'index')->name('index');
@@ -41,10 +42,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
 	Route::get('enrollment/confimation', [PaymentController::class, 'downloadConfirmation'])->name('enrollment.confirmation');
 
 	// Rotas do administrador com layout de administrador
-	
+
 });
 //corrigir as rotas apara acessoa apenas do admin
-Route::middleware(['auth', ])->group(function () {
+Route::middleware(['auth',])->group(function () {
 	Route::get('/admin/dashboard', Dashboard::class)->name('admin.dashboard');
 	Route::get('/schools', Schools::class)->name('schools.index');
 	Route::get('/salas', Rooms::class)->name('class-models');
@@ -52,8 +53,20 @@ Route::middleware(['auth', ])->group(function () {
 	Route::get('/disciplines', Disciplines::class)->name('disciplines.index');
 	Route::get('/jury-distributions', JuriDistribution::class)->name('jury.distributions');
 	Route::post('/distribute-juris', [JuriDistribution::class, 'distribute'])->name('distribute');
-
 });
+
+Route::get('/candidates/data', function () {
+	return datatables()->of(Candidate::query()->with('course:id,name')) // Carregar o curso relacionado
+		->addColumn('course_name', function ($candidate) {
+			return $candidate->course->name ?? 'Sem Curso';
+		})
+		->addColumn('actions', function ($candidate) {
+			return '<button class="bg-yellow-500 text-white px-2 py-1 rounded">Editar</button>
+                    <button class="bg-red-500 text-white px-2 py-1 rounded" onclick="Livewire.emit(\'deleteCandidate\', ' . $candidate->id . ')">Eliminar</button>';
+		})
+		->rawColumns(['actions'])
+		->make(true);
+})->name('candidates.data');
 
 Route::post('/logout', [AuthenticatedSessionController::class, 'destroy'])
 	->middleware('auth')

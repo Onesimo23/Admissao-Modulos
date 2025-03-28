@@ -10,7 +10,12 @@ class Candidate extends Model
 {
 	use HasFactory, HasUuids;
 
-	protected $guarded = [];
+	protected $fillable = [
+		'name',
+		'surname',
+		'course_id',
+		// ...outros campos...
+	];
 
 	public function uniqueIds()
 	{
@@ -41,6 +46,12 @@ class Candidate extends Model
 	{
 		return $this->hasOne(Payment::class)->latestOfMany();
 	}
+
+	public function payments()
+	{
+		return $this->hasMany(Payment::class, 'candidate_id');
+	}
+
 	public function regime()
 	{
 		return $this->belongsTo(Regime::class);
@@ -50,14 +61,17 @@ class Candidate extends Model
 	{
 		return $this->belongsTo(Province::class, 'local_exam');
 	}
+
 	public function getProvince()
 	{
 		return Province::where('name', $this->local_exam)->first();
 	}
+
 	public function allocations()
 	{
 		return $this->hasMany(Allocation::class);
 	}
+
 	public function juryDistributions()
 	{
 		return $this->hasMany(JuryDistribution::class, 'candidate_id');
