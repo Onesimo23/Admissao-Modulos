@@ -227,7 +227,7 @@
 
     <div id="overlay" class="overlay"></div>
     <div class="flex h-auto">
-        
+
         <!-- Sidebar -->
         <aside id="sidebar" class="bg-indigo-800 text-white w-64 min-h-screen overflow-y-auto transition-all duration-300 ease-in-out">
             <div class="p-4">
@@ -265,7 +265,7 @@
                         <li>
                             <a href="{{ route('disciplines.index') }}" class="flex items-center py-2 px-4 rounded hover:bg-indigo-700 transition duration-200 menu-item">
                                 <i class="fas fa-book"></i>
-                                <span class="sidebar-full ml-3">Disciplinas</span>
+                                <span class="sidebar-full ml-3">Cursos</span>
                             </a>
                         </li>
                         <li>
