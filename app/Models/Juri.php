@@ -10,7 +10,7 @@ class Juri extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'disciplina_id', 'school_id'];
+    protected $fillable = ['name', 'disciplina_id','room_id', 'school_id'];
 
     protected $guarded = [];
 

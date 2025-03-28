@@ -82,7 +82,7 @@ class Schools extends Component
 
     public function render()
     {
-        return view('livewire.schools');
+        return view('livewire.schools')->layout('layouts.admin');
     }
 
     private function resetForm()

@@ -105,6 +105,6 @@ class Monitors extends Component
 
     public function render()
     {
-        return view('livewire.monitors');
+        return view('livewire.monitors')->layout('layouts.admin');
     }
 }

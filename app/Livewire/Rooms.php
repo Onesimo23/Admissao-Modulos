@@ -106,12 +106,11 @@ class Rooms extends Component
     public function render()
     {
         $rooms = Room::query()
-            ->with('school')
-            ->when($this->search, function (Builder $query) {
-                return $query->where('name', 'like', "%{$this->search}%");
-            })
-            ->paginate($this->quantity);
-
+        ->with('school')
+        ->when($this->search, function (Builder $query) {
+            return $query->where('name', 'like', "%{$this->search}%");
+        })
+        ->paginate($this->quantity);
         return view('livewire.class-models', [
             'headers' => [
                 ['index' => 'id', 'label' => '#'],
@@ -122,7 +121,6 @@ class Rooms extends Component
                 ['index' => 'priority_level', 'label' => 'Nível de Prioridade'],
             ],
             'rows' => $rooms,
-        ]);
+        ])->layout('layouts.admin');
     }
 }
-

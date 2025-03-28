@@ -18,7 +18,7 @@ return new class () extends Migration {
             $table->string('document_number')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
-            $table->enum('role', ['user', 'admin', 'candidate'])->default('user');
+            $table->enum('role', ['user', 'admin', 'candidate'])->default('candidate');
             $table->rememberToken();
             $table->timestamps();
         });

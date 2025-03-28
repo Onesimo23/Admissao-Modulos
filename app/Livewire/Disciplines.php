@@ -115,6 +115,6 @@ class Disciplines extends Component
 
     public function render()
     {
-        return view('livewire.disciplines');
+        return view('livewire.disciplines')->layout('layouts.admin');
     }
 }

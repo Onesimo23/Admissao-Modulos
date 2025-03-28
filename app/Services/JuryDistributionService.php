@@ -19,11 +19,11 @@ class JuryDistributionService
     {
         // Desabilitar temporariamente as verificações de chave estrangeira
         DB::statement('SET FOREIGN_KEY_CHECKS=0');
-        
+
         // Limpar as tabelas 'juris' e 'jury_distributions' antes de realizar a distribuição
         Juri::truncate();
         JuryDistribution::truncate();
-        
+
         // Reabilitar as verificações de chave estrangeira
         DB::statement('SET FOREIGN_KEY_CHECKS=1');
 
@@ -33,9 +33,9 @@ class JuryDistributionService
 
         // Filtrar candidatos com status = 1 e regime_id = 1
         $candidates = Candidate::where('status', 1)
-                               ->where('regime_id', 1)
-                               ->get()
-                               ->groupBy('local_exam');
+            ->where('regime_id', 1)
+            ->get()
+            ->groupBy('local_exam');
 
         foreach ($candidates as $provinceId => $provinceCandidates) {
             $province = Province::find($provinceId);
@@ -96,7 +96,7 @@ class JuryDistributionService
         return collect($candidates)->sort(function ($a, $b) {
             $weightA = $a['is_disciplina1'] ? $a['disciplina']->peso1 : $a['disciplina']->peso2;
             $weightB = $b['is_disciplina1'] ? $b['disciplina']->peso1 : $b['disciplina']->peso2;
-            
+
             return $weightA - $weightB;
         })->values()->all();
     }
@@ -112,20 +112,30 @@ class JuryDistributionService
             $disciplina = $candidateData['disciplina'];
             $isDisciplina1 = $candidateData['is_disciplina1'];
             $examTime = $isDisciplina1 ? $disciplina->horario_disciplina1 : $disciplina->horario_disciplina2;
-            
+
+            // Garantir que a chave de horários esteja inicializada
+            if (!isset($this->roomSchedules[$currentRoom->id])) {
+                $this->roomSchedules[$currentRoom->id] = [];
+            }
+
+            // Garantir que a chave de ocupação esteja inicializada
+            if (!isset($this->roomOccupancy[$currentRoom->id][$examTime])) {
+                $this->roomOccupancy[$currentRoom->id][$examTime] = 0;
+            }
+
             // Verificar se precisa criar novo júri ou mudar de sala
             if (!$currentJury || $this->needsNewJury($currentRoom, $examTime)) {
                 // Procurar uma sala disponível que não tenha conflito de horário e capacidade
                 $availableRoom = $this->findAvailableRoom($rooms, $disciplina, $isDisciplina1);
-                
+
                 if (!$availableRoom) {
                     // Não há salas disponíveis
                     break;
                 }
-                
+
                 $currentRoom = $availableRoom;
                 $currentJury = $this->createJury($currentRoom, $disciplineName, $disciplina->id);
-                
+
                 // Registrar o horário e inicializar ocupação
                 $this->roomSchedules[$currentRoom->id][] = [
                     'disciplina_id' => $disciplina->id,
@@ -147,7 +157,7 @@ class JuryDistributionService
                 }
                 $currentRoom = $availableRoom;
                 $currentJury = $this->createJury($currentRoom, $disciplineName, $disciplina->id);
-                
+
                 // Registrar novo horário e inicializar ocupação
                 $this->roomSchedules[$currentRoom->id][] = [
                     'disciplina_id' => $disciplina->id,
@@ -171,8 +181,8 @@ class JuryDistributionService
     private function needsNewJury($room, $examTime)
     {
         // Verifica se a sala já atingiu sua capacidade para este horário
-        return isset($this->roomOccupancy[$room->id][$examTime]) && 
-               $this->roomOccupancy[$room->id][$examTime] >= $room->capacity;
+        return isset($this->roomOccupancy[$room->id][$examTime]) &&
+            $this->roomOccupancy[$room->id][$examTime] >= $room->capacity;
     }
 
     private function findAvailableRoom($rooms, $disciplina, $isDisciplina1)
@@ -180,14 +190,26 @@ class JuryDistributionService
         $examTime = $isDisciplina1 ? $disciplina->horario_disciplina1 : $disciplina->horario_disciplina2;
 
         foreach ($rooms as $room) {
+            // Garantir que a chave de horários esteja inicializada
+            if (!isset($this->roomSchedules[$room->id])) {
+                $this->roomSchedules[$room->id] = [];
+            }
+
             // Verificar se a sala tem conflito de horário
             if ($this->hasTimeConflict($room, $examTime)) {
                 continue;
             }
 
+            // Garantir que a chave de ocupação esteja inicializada
+            if (!isset($this->roomOccupancy[$room->id][$examTime])) {
+                $this->roomOccupancy[$room->id][$examTime] = 0;
+            }
+
             // Verificar se a sala tem capacidade disponível
-            if (!isset($this->roomOccupancy[$room->id][$examTime]) || 
-                $this->roomOccupancy[$room->id][$examTime] < $room->capacity) {
+            if (
+                !isset($this->roomOccupancy[$room->id][$examTime]) ||
+                $this->roomOccupancy[$room->id][$examTime] < $room->capacity
+            ) {
                 return $room;
             }
         }
@@ -196,13 +218,16 @@ class JuryDistributionService
 
     private function hasTimeConflict($room, $examTime)
     {
+        // Garantir que a chave de horários esteja inicializada
         if (!isset($this->roomSchedules[$room->id])) {
-            return false;
+            $this->roomSchedules[$room->id] = [];
         }
 
         foreach ($this->roomSchedules[$room->id] as $schedule) {
-            if (date('Y-m-d H:i', strtotime($schedule['exam_time'])) === 
-                date('Y-m-d H:i', strtotime($examTime))) {
+            if (
+                date('Y-m-d H:i', strtotime($schedule['exam_time'])) ===
+                date('Y-m-d H:i', strtotime($examTime))
+            ) {
                 return true;
             }
         }

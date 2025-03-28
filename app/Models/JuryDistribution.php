@@ -9,7 +9,7 @@ class JuryDistribution extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['juri_id', 'candidate_id', 'disciplina_id'];
+    protected $fillable = ['juri_id', 'candidate_id',  'disciplina_id'];
 
     public function jury()
     {

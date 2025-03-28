@@ -17,21 +17,30 @@ new #[Layout('layouts.guest')] class extends Component
     public function login(): void
     {
         $this->validate();
-
+    
         $loginField = filter_var($this->form->login, FILTER_VALIDATE_EMAIL) ? 'email' : 'username';
-
+    
         $credentials = [
             $loginField => $this->form->login,
             'password' => $this->form->password,
         ];
-
+    
         if (Auth::attempt($credentials, $this->form->remember)) {
             Session::regenerate();
-            $this->redirectIntended(route('dashboard'), navigate: true);
+    
+            $user = Auth::user();
+    
+            if ($user->role === 'admin') {
+                $this->redirectIntended(route('admin.dashboard'), navigate: true);
+            } else {
+                $this->redirectIntended(route('dashboard'), navigate: true);
+            }
+    
         } else {
             $this->addError('form.login', trans('auth.failed'));
         }
     }
+    
 };
 ?>
 
