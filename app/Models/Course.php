@@ -16,11 +16,11 @@ class Course extends Model
     {
         return ['uuid'];
     }
-	
+
     public function universityCourses()
     {
         return $this->hasMany(UniversityCourse::class);
-    }	
+    }
     public function candidates()
     {
         return $this->hasMany(Candidate::class);
@@ -31,11 +31,13 @@ class Course extends Model
         return $this->belongsToMany(Juri::class, 'juri_has_courses');
     }
 
-    // No modelo Course
     public function disciplina()
     {
-        return $this->hasOne(Disciplina::class);
+        return $this->hasOne(Disciplina::class, 'course_id');
     }
 
-
+    public function disciplines()
+    {
+        return $this->hasMany(Disciplina::class, 'course_id');
+    }
 }
