@@ -12,13 +12,16 @@
     </div>
 
     <!-- Filtros e Pesquisa -->
-    <div class="mb-2 flex items-center space-x-2">
-        <x-ts-input wire:model="search" placeholder="Pesquisar cursos..." class="w-1/3" />
+    <div class="mb-2 flex justify-between items-center">
         <x-ts-select.styled
             wire:model="quantity"
             :options="[10, 20, 50]"
             label="Mostrar"
             select="label:value|value:value" />
+        <div class="flex items-center space-x-2">
+            <x-ts-input wire:model="search" placeholder="Pesquisar cursos..." class="w-64" />
+            <i class="fas fa-search text-blue-500 cursor-pointer" wire:click="updatingSearch"></i>
+        </div>
     </div>
 
     <!-- Tabela de Cursos e Disciplinas -->
