@@ -256,12 +256,7 @@
                                 <span class="sidebar-full ml-3">Salas</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="{{ route('monitors.index') }}" class="flex items-center py-2 px-4 rounded hover:bg-indigo-700 transition duration-200 menu-item">
-                                <i class="fas fa-user-tie"></i>
-                                <span class="sidebar-full ml-3">Monitores</span>
-                            </a>
-                        </li>
+                      
                         <li>
                             <a href="{{ route('disciplines.index') }}" class="flex items-center py-2 px-4 rounded hover:bg-indigo-700 transition duration-200 menu-item">
                                 <i class="fas fa-book"></i>

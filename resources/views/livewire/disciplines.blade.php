@@ -8,7 +8,7 @@
 
     <!-- Informação -->
     <div class="mb-2 p-2 bg-blue-100 text-blue-700 rounded-md">
-        Permite gerenciar cursos e disciplinas, editar ou excluir cursos, e adicionar novos.
+        Permite gerenciar cursos e as disciplinas de exame, e adicionar novos.
     </div>
 
     <!-- Filtros e Pesquisa -->
@@ -34,15 +34,16 @@
         </thead>
         <tbody>
             @foreach($rows as $course)
-            <tr class="border-t hover:bg-gray-100">
-                <td class="py-2 px-3">{{ $loop->iteration }}</td>
-                <td class="py-2 px-3">{{ $course->name }}</td>
-                <td class="py-2 px-3">
-                    {{ $course->disciplina->disciplina1 ?? '-' }}
+            <tr class="bg-gray-100">
+                <td class="py-3 px-4">{{ $loop->iteration }}</td>
+                <td class="py-3 px-4">{{ $course->name }}</td>
+                <td class="py-3 px-4">
+                    {{ $course->examSubjects[0]->examSubject->name ?? '-' }}
                 </td>
-                <td class="py-2 px-3">
-                    {{ $course->disciplina->disciplina2 ?? '-' }}
+                <td class="py-3 px-4">
+                    {{ $course->examSubjects[1]->examSubject->name ?? '-' }}
                 </td>
+
                 <td class="py-2 px-3 flex space-x-2">
                     <button wire:click="edit({{ $course->id }})" class="text-blue-500 hover:text-blue-700">
                         <i class="fas fa-edit"></i>

@@ -11,7 +11,7 @@ class Disciplines extends Component
     use WithPagination;
 
     public $search = '';
-    public $quantity = 10;
+    public $quantity = 5;
     public $editing = false;
     public $courseId;
     public $name;
@@ -74,15 +74,16 @@ class Disciplines extends Component
     }
 
     public function render()
-    {
-        $courses = Course::with('disciplina')
-            ->when($this->search, function ($query) {
-                $query->where('name', 'like', "%{$this->search}%");
-            })
-            ->paginate($this->quantity);
+{
+    $courses = Course::with(['examSubjects.examSubject'])
+        ->when($this->search, function ($query) {
+            $query->where('name', 'like', "%{$this->search}%");
+        })
+        ->paginate($this->quantity);
 
-        return view('livewire.disciplines', [
-            'rows' => $courses,
-        ])->layout('layouts.admin');
-    }
+    return view('livewire.disciplines', [
+        'rows' => $courses,
+    ])->layout('layouts.admin');
+}
+
 }

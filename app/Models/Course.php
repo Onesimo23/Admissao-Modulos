@@ -25,7 +25,11 @@ class Course extends Model
     {
         return $this->hasMany(Candidate::class);
     }
-
+    public function examSubjects()
+    {
+        return $this->hasMany(CourseExamSubject::class, 'course_id');
+    }
+    
     public function juris()
     {
         return $this->belongsToMany(Juri::class, 'juri_has_courses');
