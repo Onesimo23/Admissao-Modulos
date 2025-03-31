@@ -115,33 +115,8 @@ class JuriDistribution extends Component
 
     public function exportPdf()
     {
-        // Carregar os dados necessários
-        $jury = Juri::find($this->selectedJury);
-        $candidates = $this->candidates;
-
-        // Buscar a disciplina e os horários associados
-        $disciplina = Disciplina::where('disciplina1', $this->selectedDiscipline)
-            ->orWhere('disciplina2', $this->selectedDiscipline)
-            ->first();
-
-        // Inicializar as variáveis de data e horário
-        $data = 'Data não disponível';
-        $horarioDisciplina = 'Horário não disponível';
-        $horarioEntrada = 'Horário de entrada não disponível';
-
-        if ($disciplina) {
-            if ($disciplina->disciplina1 === $this->selectedDiscipline) {
-                $horarioCompleto = Carbon::parse($disciplina->horario_disciplina1);
-            } elseif ($disciplina->disciplina2 === $this->selectedDiscipline) {
-                $horarioCompleto = Carbon::parse($disciplina->horario_disciplina2);
-            }
-
-            if (isset($horarioCompleto)) {
-                $data = $horarioCompleto->format('d/m/Y');
-                $horarioDisciplina = $horarioCompleto->format('H:i:s');
-                $horarioEntrada = $horarioCompleto->addMinutes(30)->format('H:i:s');
-            }
-        }
+        // Buscar todos os júris com suas disciplinas, salas e candidatos
+        $juries = Juri::with(['examSubject', 'room.school.province', 'candidates'])->get();
 
         // Configurar Dompdf
         $options = new Options();
@@ -151,12 +126,7 @@ class JuriDistribution extends Component
 
         // Renderizar a view para o PDF
         $html = View::make('pdf.jury-list', [
-            'jury' => $jury,
-            'disciplinaNome' => $this->selectedDiscipline,
-            'data' => $data,
-            'horarioDisciplina' => $horarioDisciplina,
-            'horarioEntrada' => $horarioEntrada,
-            'candidates' => $candidates,
+            'juries' => $juries,
         ])->render();
 
         $dompdf->loadHtml($html);
@@ -166,12 +136,11 @@ class JuriDistribution extends Component
         // Retornar o PDF como download
         return response()->streamDownload(function () use ($dompdf) {
             echo $dompdf->output();
-        }, 'distribuicao_juri.pdf');
+        }, 'todos_juris.pdf');
     }
-
 
     public function render()
     {
-        return view('livewire.juri-distribution');
+        return view('livewire.juri-distribution')->layout('layouts.admin');
     }
 }
