@@ -213,8 +213,30 @@
             --primary-color: #3730A3;
             --hover-color: #4792f5;
         }
+
+        .content-background {
+            position: relative;
+            z-index: 0;
+        }
+
+        .content-background::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: url('https://sig.unisave.ac.mz/sigeup/public/dist/img/up.png');
+            background-size: 150px 150px;
+            /* Define o tamanho pequeno da imagem */
+            background-repeat: no-repeat;
+            background-position: center;
+            opacity: 0.1;
+            /* Define a opacidade da imagem */
+            z-index: -1;
+        }
     </style>
-<link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.11.5/css/jquery.dataTables.min.css">
     <!-- Scripts -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
     <script src="https://cdn.datatables.net/1.11.5/js/jquery.dataTables.min.js"></script>
@@ -322,7 +344,7 @@
             </header>
 
             <!-- Page Content -->
-            <main class="flex-1 p-6">
+            <main class="flex-1 p-6 content-background">
                 @hasSection('content')
                 @yield('content')
                 @else
