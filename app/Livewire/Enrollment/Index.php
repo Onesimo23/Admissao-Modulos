@@ -137,77 +137,17 @@ class Index extends Component
             return ['label' => $province->name, 'value' => $province->id];
         });
 		
-		//$this->provinceDistricts = ProvinceDistrict::all()->map(function ($provinceDistrict) {
-        //    return ['label' => $provinceDistrict->name, 'value' => $provinceDistrict->id];
-        //});
-
         $this->specialNeeds = SpecialNeed::all()->map(function ($specialNeed) {
             return ['label' => $specialNeed->name, 'value' => $specialNeed->id];
         });
 		
 
-        //$this->universities = University::all()->map(function ($university) {
-        //    return ['label' => $university->name, 'value' => $university->id];
-        //});
-
-        //$this->courses = Course::all()->map(function ($course) {
-        //    return ['label' => $course->name, 'value' => $course->id];
-        //});
-		
-        //$this->regimes = Regime::all()->map(function ($regime) {
-        //    return ['label' => $regime->name, 'value' => $regime->id];
-        //});
-
-        // Initialize courses as empty until university and regime are selected
-        //$this->availableCourses = [];
-        //$this->availableRegimes = [];		
-		
-        //$this->preUniversitySchools = PreUniversitySchool::all()->map(function ($preUniversitySchool) {
-        //    return ['label' => $preUniversitySchool->name, 'value' => $preUniversitySchool->id];
-        //});		
-
-        // Initialize districts and preUniversitySchools with empty arrays
-        //$this->districts = [];
-        //$this->preUniversitySchools = [];
     }
-
-	   // public function updatedProvinceId($value)
-	   // {
-	   //     if ($value) {
-	   //         $this->districts = ProvinceDistrict::where('province_id', $value)
-	   //             ->get()
-	   //             ->map(function ($district) {
-	   //                 return ['label' => $district->name, 'value' => $district->id];
-	   //             })
-	   //             ->toArray();
-	   //     } else {
-	   //         $this->districts = [];
-	   //     }
-	   //     $this->province_district_id = null; // Reset the selected district
-	   // }
-	   //
-	   // public function updatedPreUniversityProvinceId($value)
-	   // {
-	   //     if ($value) {
-	   //         $this->preUniversitySchools = PreUniversitySchool::where('province_id', $value)
-	   //             ->get()
-	   //             ->map(function ($school) {
-	   //                 return ['label' => $school->name, 'value' => $school->id];
-	   //             })
-	   //             ->toArray();
-	   //     } else {
-	   //         $this->preUniversitySchools = [];
-	   //     }
-	   //     $this->pre_university_school_id = null; // Reset the selected school
-	   // }
-
 
 
 	public function updatedUniversityId($value)
 	{
-		// Reseta regime, curso e limpa as opções de cursos disponíveis
-		//$this->reset(['regime_id', 'course_id', 'availableCourses']);
-		
+	
         $this->regime_id = '';
 		$this->course_id = '';
 		$this->availableRegimes = [];
@@ -220,12 +160,7 @@ class Index extends Component
 			->orderBy('name')
 			->get()
 			->pluck('name', 'id')
-			//->map(function ($regime) {
-			//	return [
-			//		'label' => $regime->name,
-			//		'value' => $regime->id
-			//	];
-			//})
+		
 			->toArray();
 			//dd($this->availableRegimes);
 		} else {
@@ -318,8 +253,6 @@ class Index extends Component
         } elseif ($this->currentStep===2) {
             $this->validate([
 				'pre_university_type' 		=> 'required|string',
-				//'pre_university_province_id' 	=> 'required|exists:provinces,id',
-				//'pre_university_school_id' 	=> 'required|exists:pre_university_schools,id',
 				'pre_university_year' 		=> 'required|numeric|digits:4',
 				'local_exam'                => 'nullable|required_if:regime_id,1', // Requerido se regime_id = 1, mas pode ser nulo
 				'university_id' 			=> 'required|exists:universities,id',
@@ -402,44 +335,9 @@ class Index extends Component
 			$regime_name 		= Regime::whereId($this->regime_id)->value('name') ?? 'N/A';
 			$course_name 		= Course::whereId($this->course_id)->value('name') ?? 'N/A';
 			$local_exam_name 	= Province::whereId($this->local_exam)->value('name') ?? 'N/A';
-			
-			//dd($university_name);
-
-			// Format date to Brazilian Portuguese format
 			$birthdate_pt = $this->birthdate ? Carbon::parse($this->birthdate)->format('d/m/Y') : 'N/A';
 
-			// Format document type name if it's stored as an ID
-			//$document_type_name = match($this->document_type) {
-			//	'bi' => 'Bilhete de Identidade',
-			//	'passport' => 'Passaporte',
-			//	'dire' => 'DIRE',
-			//	default => $this->document_type ?? 'N/A'
-			//};
-            //
-			//// Format gender if it's stored as a single letter or code
-			//$gender_name = match(strtolower($this->gender)) {
-			//	'm' => 'Masculino',
-			//	'f' => 'Feminino',
-			//	default => $this->gender ?? 'N/A'
-			//};
-            //
-			//// Format marital status if it's stored as a code
-			//$marital_status_name = match(strtolower($this->marital_status)) {
-			//	'single' => 'Solteiro(a)',
-			//	'married' => 'Casado(a)',
-			//	'divorced' => 'Divorciado(a)',
-			//	'widowed' => 'Viúvo(a)',
-			//	default => $this->marital_status ?? 'N/A'
-			//};
-            //
-			//// Format pre-university type if it's stored as a code
-			//$pre_university_type_name = match(strtolower($this->pre_university_type)) {
-			//	'general' => 'Ensino Geral',
-			//	'technical' => 'Ensino Técnico',
-			//	'professional' => 'Ensino Profissional',
-			//	default => $this->pre_university_type ?? 'N/A'
-			//};
-
+		
 			return view('livewire.enrollment', compact(
 				'query3',
 				'query4',
@@ -451,10 +349,6 @@ class Index extends Component
 				'course_name',
 				'local_exam_name',
 				'birthdate_pt',
-				//'document_type_name',
-				//'gender_name',
-				//'marital_status_name',
-				//'pre_university_type_name'
 				))->layout('layouts.enroll');
 			} else {
 
