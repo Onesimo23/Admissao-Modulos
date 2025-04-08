@@ -65,7 +65,11 @@ class JuryDistribution extends Component
 
     public function downloadPdf()
     {
-        $juries = JuryDistributionModel::with(['candidate.course.examSubjects', 'room', 'school', 'province'])->get();
+        $juries = JuryDistributionModel::with(['candidate.course.examSubjects', 'room', 'school', 'province'])
+            ->get()
+            ->sortBy(function ($jury) {
+                return $jury->candidate->course->courseExamSubjects->first()->exam_date ?? '9999-12-31';
+            });
 
         $pdf = Pdf::loadView('pdf.jury_distribution', compact('juries'))
             ->setPaper('a4', 'portrait')
