@@ -82,15 +82,15 @@
         <table style="width: 100%; border-collapse: collapse; border: none;" cellspacing="0" cellpadding="0">
             <tr>
                 <td style="width: 50%; padding: 5px; border: none;"><strong>DISCIPLINA:</strong> {{ $first->candidate->course->courseExamSubjects->first()->name ?? $first->discipline }}</td>
-                <td style="width: 50%; padding: 5px; text-align: right; border: none;"><strong>Data:</strong> {{ $first->candidate->course->examSubjects->first()->exam_date ?? 'N/A' }}</td>
+                <td style="width: 50%; padding: 5px; text-align: right; border: none;"><strong>Data:</strong> {{ $first->candidate->course->courseExamSubjects->first()->exam_date ?? 'N/A' }}</td>
             </tr>
             <tr>
                 <td style="width: 50%; padding: 5px; border: none;"><strong>PROVÍNCIA:</strong> {{ $first->province->name }}</td>
-                <td style="width: 50%; padding: 5px; text-align: right; border: none;"><strong>Hora:</strong> {{ $first->candidate->course->examSubjects->first()->start_time ?? 'N/A' }}</td>
+                <td style="width: 50%; padding: 5px; text-align: right; border: none;"><strong>Hora:</strong> {{ $first->candidate->course->courseExamSubjects->first()->start_time ?? 'N/A' }}</td>
             </tr>
             <tr>
                 <td style="width: 50%; padding: 5px; border: none;"><strong>SALA:</strong> {{ $first->room->name }}</td>
-                <td style="width: 50%; padding: 5px; text-align: right; border: none;"><strong>H.Entrada:</strong> {{ $first->candidate->course->examSubjects->first()->arrival_time ?? 'N/A' }}</td>
+                <td style="width: 50%; padding: 5px; text-align: right; border: none;"><strong>H.Entrada:</strong> {{ $first->candidate->course->courseExamSubjects->first()->arrival_time ?? 'N/A' }}</td>
             </tr>
         </table>
     </div>
@@ -131,16 +131,16 @@
         <hr>
         <script type="text/php">
             if (isset($pdf)) {
-                $pdf->page_script('
-                $font = $fontMetrics->get_font("Dreaming Outloud Script Pro", "normal");
-                    $size = 10;
-                    $pageText = "Página " . $PAGE_NUM . " de " . $PAGE_COUNT;
-                    $y = 820; // Ajusta a posição vertical para o rodapé
-                    $x = 270; // Centraliza o texto horizontalmente
-                    $pdf->text($x, $y, $pageText, $font, $size);
-                ');
-            }
-        </script>
+        $pdf->page_script('
+            $font = $fontMetrics->get_font("Arial", "normal");
+            $size = 9;
+            $pageText = "Página " . $PAGE_NUM . " de " . $PAGE_COUNT;
+            $y = 820; // Ajusta a posição vertical para o rodapé
+            $x = 270; // Centraliza o texto horizontalmente
+            $pdf->text($x, $y, $pageText, $font, $size);
+        ');
+    }
+</script>
     </div>
 </body>
 
