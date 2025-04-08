@@ -28,7 +28,7 @@
         <div class="jury-section">
             <div class="jury-header">
                 <h2>Júri da Sala: {{ $first->room->name }}</h2>
-                <h3>Disciplina: {{ $first->discipline }}</h3>
+                <h3>Disciplina: {{ $first->candidate->course->courseExamSubjects->first()->name ?? $first->discipline }}</h3>
                 <p><strong>Escola:</strong> {{ $first->school->name }} | <strong>Província:</strong> {{ $first->province->name }}</p>
             </div>
 

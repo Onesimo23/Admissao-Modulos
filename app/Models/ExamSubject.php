@@ -11,4 +11,14 @@ class ExamSubject extends Model
 
     protected $table = 'exam_subjects'; // Nome da tabela
     protected $fillable = ['name', 'exam_date', 'arrival_time', 'start_time'];
+
+    public function courses()
+    {
+        return $this->belongsToMany(Course::class, 'course_exam_subjects');
+    }
+    public function candidates()
+    {
+        return $this->hasMany(Candidate::class);
+    }
+    
 }
