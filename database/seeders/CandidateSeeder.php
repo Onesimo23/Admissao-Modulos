@@ -23,14 +23,27 @@ class CandidateSeeder extends Seeder
         $provinces = Province::all();
         $specialNeeds = SpecialNeed::all();
         $universities = University::all();
-        $courses = Course::all();
-        $regime = Regime::where('name', 'Laboral')->first();
+        $regimes = Regime::whereIn('id', [1, 2, 3, 4])->get(); // Incluindo todos os regimes (1, 2, 3, 4)
+        
+        // Cursos que podem ser atribuídos ao regime 1
+        $coursesForRegime1 = Course::whereIn('id', [13, 6, 7, 5, 11, 21, 12, 1, 17, 15, 23, 4, 8, 14, 24, 9])->get();
+
+        // Cursos que podem ser atribuídos a outros regimes (2, 3 ou 4)
+        $coursesForOtherRegimes = Course::whereNotIn('id', [13, 6, 7, 5, 11, 21, 12, 1, 17, 15, 23, 4, 8, 14, 24, 9])->get();
 
         for ($i = 0; $i < 500; $i++) {
             $province = $provinces->random();
             $specialNeed = $specialNeeds->random();
             $university = $universities->random();
-            $course = $courses->random();
+            $regime = $regimes->random(); // Selecionar aleatoriamente entre todos os regimes (1, 2, 3, 4)
+
+            // Se o regime for 1 (LABORAL), atribui um curso da lista específica
+            if ($regime->id == 1) {
+                $course = $coursesForRegime1->random();
+            } else {
+                // Caso contrário, atribui um curso da lista dos outros regimes
+                $course = $coursesForOtherRegimes->random();
+            }
 
             $candidate = Candidate::create([
                 'surname' => strtoupper(fake()->lastName),
@@ -51,9 +64,9 @@ class CandidateSeeder extends Seeder
                 'pre_university_year' => fake()->year,
                 'local_exam' => $province->id,
                 'university_id' => $university->id,
-                'regime_id' => $regime->id,
-                'course_id' => $course->id,
-                'status' => 1, // Initial status
+                'regime_id' => $regime->id, // Regime aleatório entre 1, 2, 3 ou 4
+                'course_id' => $course->id, // Curso atribuído conforme o regime
+                'status' => 1, // Status inicial
             ]);
 
             $user = User::create([

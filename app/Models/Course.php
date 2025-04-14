@@ -34,6 +34,14 @@ class Course extends Model
     {
         return $this->belongsToMany(Juri::class, 'juri_has_courses');
     }
+    public function examSubject()
+    {
+        return $this->belongsTo(ExamSubject::class);
+    }
+    public function courseexamSubjects()
+{
+    return $this->belongsToMany(ExamSubject::class, 'course_exam_subjects');
+}
 
     public function disciplina()
     {
