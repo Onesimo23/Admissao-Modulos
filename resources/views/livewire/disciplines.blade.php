@@ -15,7 +15,7 @@
     <div class="mb-2 flex justify-between items-center">
         <x-ts-select.styled
             wire:model="quantity"
-            :options="[10, 20, 50]"
+            :options="[5, 10, 15, 20, 50]"
             label="Mostrar"
             select="label:value|value:value" />
         <div class="flex items-center space-x-2">
