@@ -59,12 +59,12 @@
 
 <body>
     @php
-    $grouped = $juries->groupBy(function($jury) {
-    return $jury->room_id . '-' . $jury->discipline;
+    $groupedByDiscipline = $juries->groupBy(function($jury) {
+    return $jury->discipline;
     });
     @endphp
 
-    @foreach($grouped as $groupKey => $juryGroup)
+    @foreach($groupedByDiscipline as $groupKey => $juryGroup)
     @php
     $first = $juryGroup->first();
     @endphp

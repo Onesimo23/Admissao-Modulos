@@ -21,9 +21,18 @@ class JuryDistribution extends Model {
     public function school() {
         return $this->belongsTo(School::class);
     }
-
     public function province() {
         return $this->belongsTo(Province::class);
     }
+    public function jury() {
+        return $this->belongsTo(Juri::class);
+    }
+    public function course() {
+        return $this->belongsTo(Course::class);
+    }
+    public function discipline() {
+        return $this->belongsTo(Disciplina::class);
+    }
+
 }
 

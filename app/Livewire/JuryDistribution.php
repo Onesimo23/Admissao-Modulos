@@ -62,7 +62,6 @@ class JuryDistribution extends Component
         $this->toast()->success('Sucesso', 'Júris distribuídos com sucesso!')->send();
     }
 
-
     public function downloadPdf()
     {
         $juries = JuryDistributionModel::with(['candidate.course.examSubjects', 'room', 'school', 'province'])
@@ -81,8 +80,6 @@ class JuryDistribution extends Component
             'jury_distribution.pdf'
         );
     }
-
-
 
     public function render()
     {

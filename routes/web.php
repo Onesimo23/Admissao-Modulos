@@ -46,7 +46,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 });
 //corrigir as rotas apara acessoa apenas do admin
 Route::middleware(['auth',])->group(function () {
-	Route::get('/admin/dashboard', Dashboard::class)->name('admin.dashboard');
+	Route::get('/admin', Dashboard::class)->name('admin.dashboard');
 	Route::get('/schools', Schools::class)->name('schools.index');
 	Route::get('/salas', Rooms::class)->name('class-models');
 	Route::get('/monitores', Monitors::class)->name('monitors.index');
