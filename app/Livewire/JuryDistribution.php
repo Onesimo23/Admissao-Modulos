@@ -67,7 +67,10 @@ class JuryDistribution extends Component
         $juries = JuryDistributionModel::with(['candidate.course.examSubjects', 'room', 'school', 'province'])
             ->get()
             ->sortBy(function ($jury) {
-                return $jury->candidate->course->courseExamSubjects->first()->exam_date ?? '9999-12-31';
+                // Ordena primeiro pela data do exame e depois pela hora
+                $examDate = $jury->candidate->course->courseExamSubjects->first()->exam_date ?? '9999-12-31';
+                $startTime = $jury->candidate->course->courseExamSubjects->first()->start_time ?? '23:59:59';
+                return $examDate . ' ' . $startTime; // Combina data e hora para ordenação
             })
             ->groupBy('room_id'); // Agrupa os registros por sala
 
