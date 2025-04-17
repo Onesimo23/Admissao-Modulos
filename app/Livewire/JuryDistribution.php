@@ -68,7 +68,8 @@ class JuryDistribution extends Component
             ->get()
             ->sortBy(function ($jury) {
                 return $jury->candidate->course->courseExamSubjects->first()->exam_date ?? '9999-12-31';
-            });
+            })
+            ->groupBy('room_id'); // Agrupa os registros por sala
 
         $pdf = Pdf::loadView('pdf.jury_distribution', compact('juries'))
             ->setPaper('a4', 'portrait')

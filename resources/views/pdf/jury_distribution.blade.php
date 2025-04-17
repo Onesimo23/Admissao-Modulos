@@ -58,17 +58,7 @@
 </head>
 
 <body>
-    @php
-    $groupedByDiscipline = $juries->groupBy(function($jury) {
-    return $jury->discipline;
-    });
-    @endphp
-
-    @foreach($groupedByDiscipline as $groupKey => $juryGroup)
-    @php
-    $first = $juryGroup->first();
-    @endphp
-
+    @foreach($juries as $roomId => $juryGroup)
     <div class="cabecalho" style="text-align: center; text-transform: uppercase;">
         <img src="https://sig.unisave.ac.mz/sigeup/public/dist/img/up.png" alt="Logotipo">
         <h3>Universidade Save</h3>
@@ -77,31 +67,28 @@
     </div>
     <hr>
 
-
     <div style="background-color: #f5f5f5; padding: 10px; margin-bottom: 20px;">
         <table style="width: 100%; border-collapse: collapse; border: none;" cellspacing="0" cellpadding="0">
             <tr>
-                <td style="width: 50%; padding: 5px; border: none;"><strong>DISCIPLINA:</strong> {{ $first->candidate->course->courseExamSubjects->first()->name ?? $first->discipline }}</td>
-                <td style="width: 50%; padding: 5px; text-align: right; border: none;"><strong>Data:</strong> {{ $first->candidate->course->courseExamSubjects->first()->exam_date ?? 'N/A' }}</td>
+                <td style="width: 50%; padding: 5px; border: none;"><strong>DISCIPLINA:</strong> {{ $juryGroup->first()->candidate->course->courseExamSubjects->first()->name ?? $juryGroup->first()->discipline }}</td>
+                <td style="width: 50%; padding: 5px; text-align: right; border: none;"><strong>Data:</strong> {{ $juryGroup->first()->candidate->course->courseExamSubjects->first()->exam_date ?? 'N/A' }}</td>
             </tr>
             <tr>
-                <td style="width: 50%; padding: 5px; border: none;"><strong>PROVÍNCIA:</strong> {{ $first->province->name }}</td>
-                <td style="width: 50%; padding: 5px; text-align: right; border: none;"><strong>Hora:</strong> {{ $first->candidate->course->courseExamSubjects->first()->start_time ?? 'N/A' }}</td>
+                <td style="width: 50%; padding: 5px; border: none;"><strong>PROVÍNCIA:</strong> {{ $juryGroup->first()->province->name }}</td>
+                <td style="width: 50%; padding: 5px; text-align: right; border: none;"><strong>Hora:</strong> {{ $juryGroup->first()->candidate->course->courseExamSubjects->first()->start_time ?? 'N/A' }}</td>
             </tr>
             <tr>
-                <td style="width: 50%; padding: 5px; border: none;"><strong>SALA:</strong> {{ $first->room->name }}</td>
-                <td style="width: 50%; padding: 5px; text-align: right; border: none;"><strong>H.Entrada:</strong> {{ $first->candidate->course->courseExamSubjects->first()->arrival_time ?? 'N/A' }}</td>
+                <td style="width: 50%; padding: 5px; border: none;"><strong>SALA:</strong> {{ $juryGroup->first()->room->name }}</td>
+                <td style="width: 50%; padding: 5px; text-align: right; border: none;"><strong>H.Entrada:</strong> {{ $juryGroup->first()->candidate->course->courseExamSubjects->first()->arrival_time ?? 'N/A' }}</td>
             </tr>
         </table>
     </div>
 
     <div style="margin-bottom: 10px;">
-        <strong>LOCAL:</strong> {{ $first->school->name }}
+        <strong>LOCAL:</strong> {{ $juryGroup->first()->school->name }}
     </div>
 
     <div class="jury-section">
-
-
         <table>
             <thead>
                 <tr>
@@ -111,7 +98,7 @@
                 </tr>
             </thead>
             <tbody>
-                @foreach($juryGroup as $index => $jury)
+                @foreach($juryGroup as $jury)
                 <tr>
                     <td>{{ $jury->candidate->id }}</td>
                     <td>{{ $jury->candidate->name }} {{ $jury->candidate->surname }}</td>
@@ -122,9 +109,7 @@
         </table>
     </div>
 
-    @if (!$loop->last)
     <div class="page-break"></div>
-    @endif
     @endforeach
 
     <div class="footer">
