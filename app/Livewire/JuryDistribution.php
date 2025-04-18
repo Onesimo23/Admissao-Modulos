@@ -21,32 +21,23 @@ class JuryDistribution extends Component
     {
         JuryDistributionModel::truncate(); // Limpa distribuições anteriores
 
-        // Filtra candidatos com regime_id = 1 (regime laboral)
-        $candidates = Candidate::with(['province', 'course.courseexamSubjects'])
+        $candidates = Candidate::with(['course.courseexamSubjects'])
             ->where('regime_id', 1)
+            ->whereHas('payments', fn($q) => $q->where('status', 1))
             ->get();
 
         foreach ($candidates as $candidate) {
-            $provinceId = $candidate->province_id;
-            $course = $candidate->course;
+            $examProvinceId = $candidate->local_exam;
+            $examSubjects = $candidate->course->courseexamSubjects;
 
-            // Pega as disciplinas (exames) que o curso do candidato exige
-            $examSubjects = $course->courseexamSubjects;
+            $schools = School::where('province_id', $examProvinceId)->get();
 
-            // Obter escolas e salas da província do candidato
-            $schools = School::where('province_id', $provinceId)->get();
-
-            if ($examSubjects->count() < 2) {
-                // Se não houver duas disciplinas, pula o candidato
-                continue;
-            }
+            if ($examSubjects->count() < 2) continue;
 
             $schoolIndex = 0;
             $roomIndex = 0;
 
             foreach ($examSubjects as $subject) {
-                // Log::info("Distribuindo: Candidato {$candidate->id}, Disciplina {$subject->id}");            
-
                 $school = $schools[$schoolIndex] ?? null;
 
                 if (!$school) break;
@@ -61,18 +52,14 @@ class JuryDistribution extends Component
                     'candidate_id' => $candidate->id,
                     'room_id' => $room->id,
                     'school_id' => $school->id,
-                    'province_id' => $provinceId,
+                    'province_id' => $examProvinceId, // agora baseado no local de exame
                     'exam_subject_id' => $subject->id,
-                    
                 ]);
-                // Log::info("Distribuição criada para candidato {$candidate->id} e disciplina {$subject->id}");
 
-                // Verifica capacidade da sala
                 if ($room->capacity <= JuryDistributionModel::where('room_id', $room->id)->count()) {
                     $roomIndex++;
                 }
 
-                // Se acabaram as salas da escola atual, vai para próxima
                 if ($roomIndex >= $rooms->count()) {
                     $schoolIndex++;
                     $roomIndex = 0;
@@ -83,6 +70,77 @@ class JuryDistribution extends Component
         $this->toast()->success('Sucesso', 'Júris distribuídos com sucesso!')->send();
     }
 
+
+    public function distributeNewCandidates()
+    {
+        $candidates = Candidate::with(['course.courseexamSubjects'])
+            ->where('regime_id', 1)
+            ->whereHas('payments', fn($q) => $q->where('status', 1))
+            ->whereDoesntHave('juryDistributions')
+            ->get();
+
+        foreach ($candidates as $candidate) {
+            $examProvinceId = $candidate->local_exam;
+            $examSubjects = $candidate->course->courseexamSubjects;
+
+            if ($examSubjects->count() < 2) continue;
+
+            foreach ($examSubjects as $subject) {
+                $existingJuries = JuryDistributionModel::where('exam_subject_id', $subject->id)
+                    ->where('province_id', $examProvinceId)
+                    ->get()
+                    ->groupBy('room_id');
+
+                $roomAssigned = false;
+
+                foreach ($existingJuries as $roomId => $juries) {
+                    $room = Room::find($roomId);
+                    if ($room && $juries->count() < $room->capacity) {
+                        JuryDistributionModel::create([
+                            'candidate_id' => $candidate->id,
+                            'room_id' => $room->id,
+                            'school_id' => $room->school_id,
+                            'province_id' => $examProvinceId,
+                            'exam_subject_id' => $subject->id,
+                        ]);
+                        $roomAssigned = true;
+                        break;
+                    }
+                }
+
+                if (!$roomAssigned) {
+                    $schools = School::where('province_id', $examProvinceId)->get();
+                    foreach ($schools as $school) {
+                        foreach ($school->rooms as $room) {
+                            $currentCount = JuryDistributionModel::where('room_id', $room->id)
+                                ->where('exam_subject_id', $subject->id)
+                                ->count();
+                            if ($currentCount < $room->capacity) {
+                                JuryDistributionModel::create([
+                                    'candidate_id' => $candidate->id,
+                                    'room_id' => $room->id,
+                                    'school_id' => $school->id,
+                                    'province_id' => $examProvinceId,
+                                    'exam_subject_id' => $subject->id,
+                                ]);
+                                break 2;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        $this->toast()->success('Sucesso', 'Novos candidatos distribuídos com sucesso!')->send();
+    }
+
+
+    public function resetAndDistributeJuries()
+    {
+        JuryDistributionModel::truncate();
+        $this->distributeJuries();
+        $this->toast()->success('Júris refeitos com sucesso!', 'Todos os júris foram recriados.')->send();
+    }
     public function downloadPdf()
     {
         $juries = JuryDistributionModel::with(['candidate', 'room', 'school', 'province', 'examSubject'])
@@ -96,18 +154,18 @@ class JuryDistribution extends Component
                 // Agrupar por disciplina e sala ao mesmo tempo (chave combinada)
                 return $jury->exam_subject_id . '-' . $jury->room_id;
             });
-    
+
         $pdf = Pdf::loadView('pdf.jury_distribution', compact('juries'))
             ->setPaper('a4', 'portrait')
             ->setOption('isHtml5ParserEnabled', true)
             ->setOption('isPhpEnabled', true);
-    
+
         return Response::streamDownload(
             fn() => print($pdf->output()),
             'jury_distribution.pdf'
         );
     }
-    
+
 
 
     public function render()

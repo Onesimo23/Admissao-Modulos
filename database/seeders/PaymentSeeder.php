@@ -10,9 +10,6 @@ use Carbon\Carbon;
 
 class PaymentSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
         $candidates = Candidate::whereHas('regime', function ($query) {
@@ -23,10 +20,10 @@ class PaymentSeeder extends Seeder
             Payment::create([
                 'candidate_id' => $candidate->id,
                 'doc' => null,
-                'value' => '1000.00', // Example value
-                'entity' => '12345', // Example entity
+                'value' => '1000.00',
+                'entity' => '12345',
                 'reference' => strtoupper(Str::random(10)),
-                'status' => 1, // Confirmed status
+                'status' => 1,
                 'date_payment' => Carbon::now(),
             ]);
         }

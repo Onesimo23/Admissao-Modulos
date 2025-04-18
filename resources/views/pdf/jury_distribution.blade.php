@@ -109,7 +109,7 @@
                 @foreach($juryGroup as $jury)
                 <tr>
                     <td>{{ $jury->candidate->id }}</td>
-                    <td>{{ $jury->candidate->name }} {{ $jury->candidate->surname }}</td>
+                    <td>{{ $jury->candidate->surname }} {{ $jury->candidate->name }}</td>
                     <td></td>
                 </tr>
                 @endforeach

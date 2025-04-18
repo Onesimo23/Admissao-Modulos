@@ -14,7 +14,25 @@ class Candidate extends Model
 		'name',
 		'surname',
 		'course_id',
-		// ...outros campos...
+		'province_id',
+		'local_exam',
+		'regime_id',
+		'email',
+		'birthdate',
+		'nationality',
+		'gender',
+		'marital_status',
+		'document_type',
+		'document_number',
+		'nuit',
+		'cell1',
+		'cell2',
+		'pre_university_type',
+		'pre_university_year',
+		'status',
+		'special_need_id',
+		'university_id',
+		'user_id',
 	];
 
 	public function uniqueIds()
