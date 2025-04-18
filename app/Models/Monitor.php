@@ -12,9 +12,9 @@ class Monitor extends Model
     protected $guarded = [];
     protected $fillable = ['name', 'email', 'phone', 'status', 'province_id'];
 
-    // Em App\Models\Monitor.php
     public function juris()
     {
         return $this->belongsToMany(Juri::class, 'juri_monitor', 'monitor_id', 'juri_id');
     }
+    
 }

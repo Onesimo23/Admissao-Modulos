@@ -58,9 +58,17 @@
 </head>
 
 <body>
-    @foreach($juries as $roomId => $juryGroup)
+    @foreach($juries as $groupKey => $juryGroup)
+    @php
+    $first = $juryGroup->first();
+    $examSubject = $first->examSubject;
+    $room = $first->room;
+    $school = $first->school;
+    $province = $first->province;
+    @endphp
+
     <div class="cabecalho" style="text-align: center; text-transform: uppercase;">
-        <img src="https://sig.unisave.ac.mz/sigeup/public/dist/img/up.png" alt="Logotipo">
+        <img src="{{ public_path('up.png') }}" alt="Logotipo" style="width: 100px; height: auto;">
         <h3>Universidade Save</h3>
         <h3>Exames de Admissão de {{ date('Y') }}</h3>
         <h3>Lista de Candidatos por Sala de Exame</h3>
@@ -70,22 +78,22 @@
     <div style="background-color: #f5f5f5; padding: 10px; margin-bottom: 20px;">
         <table style="width: 100%; border-collapse: collapse; border: none;" cellspacing="0" cellpadding="0">
             <tr>
-                <td style="width: 50%; padding: 5px; border: none;"><strong>DISCIPLINA:</strong> {{ $juryGroup->first()->candidate->course->courseExamSubjects->first()->name ?? $juryGroup->first()->discipline }}</td>
-                <td style="width: 50%; padding: 5px; text-align: right; border: none;"><strong>Data:</strong> {{ $juryGroup->first()->candidate->course->courseExamSubjects->first()->exam_date ?? 'N/A' }}</td>
+                <td style="width: 50%; padding: 5px; border: none;"><strong>DISCIPLINA:</strong> {{ $examSubject->name }}</td>
+                <td style="width: 50%; padding: 5px; text-align: right; border: none;"><strong>Data:</strong> {{ $examSubject->exam_date }}</td>
             </tr>
             <tr>
-                <td style="width: 50%; padding: 5px; border: none;"><strong>PROVÍNCIA:</strong> {{ $juryGroup->first()->province->name }}</td>
-                <td style="width: 50%; padding: 5px; text-align: right; border: none;"><strong>Hora:</strong> {{ $juryGroup->first()->candidate->course->courseExamSubjects->first()->start_time ?? 'N/A' }}</td>
+                <td style="width: 50%; padding: 5px; border: none;"><strong>PROVÍNCIA:</strong> {{ $province->name }}</td>
+                <td style="width: 50%; padding: 5px; text-align: right; border: none;"><strong>Hora:</strong> {{ $examSubject->start_time }}</td>
             </tr>
             <tr>
-                <td style="width: 50%; padding: 5px; border: none;"><strong>SALA:</strong> {{ $juryGroup->first()->room->name }}</td>
-                <td style="width: 50%; padding: 5px; text-align: right; border: none;"><strong>H.Entrada:</strong> {{ $juryGroup->first()->candidate->course->courseExamSubjects->first()->arrival_time ?? 'N/A' }}</td>
+                <td style="width: 50%; padding: 5px; border: none;"><strong>SALA:</strong> {{ $room->name }}</td>
+                <td style="width: 50%; padding: 5px; text-align: right; border: none;"><strong>H.Entrada:</strong> {{ $examSubject->arrival_time }}</td>
             </tr>
         </table>
     </div>
 
     <div style="margin-bottom: 10px;">
-        <strong>LOCAL:</strong> {{ $juryGroup->first()->school->name }}
+        <strong>LOCAL:</strong> {{ $school->name }}
     </div>
 
     <div class="jury-section">
@@ -116,16 +124,16 @@
         <hr>
         <script type="text/php">
             if (isset($pdf)) {
-        $pdf->page_script('
-            $font = $fontMetrics->get_font("Arial", "normal");
-            $size = 9;
-            $pageText = "Página " . $PAGE_NUM . " de " . $PAGE_COUNT;
-            $y = 820; // Ajusta a posição vertical para o rodapé
-            $x = 270; // Centraliza o texto horizontalmente
-            $pdf->text($x, $y, $pageText, $font, $size);
-        ');
-    }
-</script>
+            $pdf->page_script('
+                $font = $fontMetrics->get_font("Arial", "normal");
+                $size = 9;
+                $pageText = "Página " . $PAGE_NUM . " de " . $PAGE_COUNT;
+                $y = 820;
+                $x = 270;
+                $pdf->text($x, $y, $pageText, $font, $size);
+            ');
+        }
+    </script>
     </div>
 </body>
 

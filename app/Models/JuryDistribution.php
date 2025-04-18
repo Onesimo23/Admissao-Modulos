@@ -8,12 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class JuryDistribution extends Model {
     use HasFactory;
 
-    protected $fillable = ['candidate_id', 'room_id', 'school_id', 'province_id', 'discipline'];
+    protected $fillable = ['candidate_id', 'room_id', 'school_id', 'province_id', 'exam_subject_id'];
 
     public function candidate() {
         return $this->belongsTo(Candidate::class);
     }
-
+    public function examSubject()
+    {
+        return $this->belongsTo(ExamSubject::class);
+    }
     public function room() {
         return $this->belongsTo(Room::class);
     }

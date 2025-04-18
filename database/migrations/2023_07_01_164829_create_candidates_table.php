@@ -17,8 +17,6 @@ return new class extends Migration
             $table->foreignId('province_id')->constrained();
             //$table->foreignId('province_district_id')->nullable()->constrained();
             $table->foreignId('special_need_id')->constrained();
-            //$table->foreignId('pre_university_school_id')->nullable()->constrained();
-			//$table->foreignId('pre_university_province_id')->nullable()->constrained();
             $table->foreignId('university_id')->constrained();
             $table->foreignId('regime_id')->constrained();;			
             $table->foreignId('course_id')->constrained();
