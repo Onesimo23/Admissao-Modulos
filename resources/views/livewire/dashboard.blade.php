@@ -17,15 +17,15 @@
                     $cor = 'red';
 
                     if (Auth::user()->candidate && Auth::user()->candidate->payment && Auth::user()->candidate->payment->status == 0) {
-                        $progresso = 75;
-                        $mensagem = 'Seu Guia de pagamento foi gerado, Efectue o pagamento e aguarde 72h pela confirmação no sistema.<span class="text-red-800"><b>. NÃO Edite seus dados, após efectuar o pagamento</b></span>';
-                        $cor = 'yellow';
+                    $progresso = 75;
+                    $mensagem = 'Seu Guia de pagamento foi gerado, Efectue o pagamento e aguarde 72h pela confirmação no sistema.<span class="text-red-800"><b>. NÃO Edite seus dados, após efectuar o pagamento</b></span>';
+                    $cor = 'yellow';
                     }
 
                     if (Auth::user()->candidate && Auth::user()->candidate->payment && Auth::user()->candidate->payment->status == 1) {
-                        $progresso = 100;
-                        $mensagem = 'A sua Pré-Inscrição foi concluida!';
-                        $cor = 'green';
+                    $progresso = 100;
+                    $mensagem = 'A sua Pré-Inscrição foi concluida!';
+                    $cor = 'green';
                     }
                     @endphp
 
@@ -53,7 +53,9 @@
                         <div class="border-b border-gray-200 dark:border-gray-700">
                             <nav class="-mb-px flex space-x-8">
                                 @if($candidate->juryDistributions->isNotEmpty())
-                                <a href="#" @click.prevent="activeTab = 'examDetails'" :class="{ 'border-indigo-500 text-indigo-600': activeTab === 'examDetails', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'examDetails' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                                <a href="#" @click.prevent="activeTab = 'examDetails'"
+                                    :class="{ 'border-indigo-500 text-indigo-600': activeTab === 'examDetails', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeTab !== 'examDetails' }"
+                                    class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
                                     Detalhes do Exame
                                 </a>
                                 @endif
@@ -64,6 +66,7 @@
                         </div>
 
                         <!-- Exam Details Tab -->
+
                         @if($candidate->juryDistributions->isNotEmpty())
                         <div x-show="activeTab === 'examDetails'" class="mt-6">
                             <h2 class="text-center text-2xl font-bold leading-9 tracking-tight text-gray-900">
@@ -76,8 +79,6 @@
                                 </span>
                             </center>
                             <hr>
-                            <br>
-
                             @if (session()->has('error'))
                             <div class="mt-4 p-4 text-sm text-red-700 bg-red-100 rounded-lg">
                                 {{ session('error') }}
@@ -85,126 +86,80 @@
                             @endif
 
                             <div class="mt-6">
-                              
-                                @if($candidate->juryDistributions->isNotEmpty())
                                 <div class="mt-8">
                                     <div class="mt-4 overflow-x-auto">
                                         <div class="bg-white shadow-sm rounded-lg p-6">
                                             <div x-data="{ activeExamTab: 'exam1' }">
-                                                <div class="border-b border-gray-200 dark:border-gray-700">
+                                                <div class="border-b border-gray-200">
                                                     <nav class="-mb-px flex space-x-8">
-                                                        <a href="#" @click.prevent="activeExamTab = 'exam1'" :class="{ 'border-indigo-500 text-indigo-600': activeExamTab === 'exam1', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeExamTab !== 'exam1' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                                                        <a href="#" @click.prevent="activeExamTab = 'exam1'"
+                                                            :class="{ 'border-indigo-500 text-indigo-600': activeExamTab === 'exam1', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeExamTab !== 'exam1' }"
+                                                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
                                                             Exame 1
                                                         </a>
-                                                        <a href="#" @click.prevent="activeExamTab = 'exam2'" :class="{ 'border-indigo-500 text-indigo-600': activeExamTab === 'exam2', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeExamTab !== 'exam2' }" class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
+                                                        <a href="#" @click.prevent="activeExamTab = 'exam2'"
+                                                            :class="{ 'border-indigo-500 text-indigo-600': activeExamTab === 'exam2', 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300': activeExamTab !== 'exam2' }"
+                                                            class="whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm">
                                                             Exame 2
                                                         </a>
                                                     </nav>
                                                 </div>
 
-                                                <!-- Exame 1 Tab -->
+                                                <!-- Exame 1 -->
                                                 <div x-show="activeExamTab === 'exam1'" class="mt-6">
-                                                    @foreach($candidate->juryDistributions as $index => $distribution)
-                                                    @if($index === 0)
-                                                    <div class="mb-6 border-b border-gray-300 pb-4">
-                                                        <!-- <h3 class="text-md font-semibold text-gray-700">
-                                                            Exame {{ $index + 1 }}
-                                                        </h3> -->
-                                                        <div class="mt-2 space-y-2">
-                                                            <p class="text-sm text-gray-600">
-                                                                <span class="font-medium">Disciplina:</span>
-                                                                {{ $distribution->disciplina->disciplina1 ?? 'N/A' }}
-                                                            </p>
-                                                            <p class="text-sm text-gray-600">
-                                                                <span class="font-medium">Dia:</span>
-                                                                {{ $distribution->disciplina->horario_disciplina1 
-                                                                    ? \Carbon\Carbon::parse($distribution->disciplina->horario_disciplina1)->format('d/m/Y') 
-                                                                    : 'N/A' }}
-                                                            </p>
-                                                            <p class="text-sm text-gray-600">
-                                                                <span class="font-medium">Hora de Chegada:</span>
-                                                                {{ $distribution->disciplina->horario_disciplina1 
-                                                                    ? \Carbon\Carbon::parse($distribution->disciplina->horario_disciplina1)
-                                                                        ->subMinutes(30)->format('H:i') 
-                                                                    : 'N/A' }}
-                                                            </p>
-                                                            <p class="text-sm text-gray-600">
-                                                                <span class="font-medium">Hora de Início:</span>
-                                                                {{ $distribution->disciplina->horario_disciplina1 
-                                                                    ? \Carbon\Carbon::parse($distribution->disciplina->horario_disciplina1)->format('H:i') 
-                                                                    : 'N/A' }}
-                                                            </p>
-                                                            <p class="text-sm text-gray-600">
-                                                                <span class="font-medium">Escola:</span>
-                                                                {{ $distribution->jury->room->school->name ?? 'N/A' }}
-                                                            </p>
-                                                            <p class="text-sm text-gray-600">
-                                                                <span class="font-medium">Sala do Exame:</span>
-                                                                {{ $distribution->jury->room->name ?? 'N/A' }}
-                                                            </p>
-                                                        </div>
+                                                    @if(isset($candidate->juryDistributions[0]))
+                                                    @php $distribution = $candidate->juryDistributions[0]; @endphp
+                                                    <div class="mb-6 border-b border-gray-300 pb-4 space-y-2">
+                                                        <p class="text-sm text-gray-600"><strong>DISCIPLINA:</strong> {{ $distribution->examSubject->name ?? 'N/A' }}</p>
+                                                        <p class="text-sm text-gray-600"><strong>DATA:</strong>
+                                                            {{ $distribution->examSubject->exam_date ? \Carbon\Carbon::parse($distribution->examSubject->exam_date)->format('d/m/Y') : 'N/A' }}
+                                                        </p>
+                                                        <p class="text-sm text-gray-600"><strong>PROVÍNCIA:</strong> {{ $distribution->province->name ?? 'N/A' }}</p>
+                                                        <p class="text-sm text-gray-600"><strong>Hora de chegada:</strong>
+                                                            {{ $distribution->examSubject->arrival_time ? \Carbon\Carbon::parse($distribution->examSubject->arrival_time)->format('H:i') : 'N/A' }}
+                                                        </p>
+                                                        <p class="text-sm text-gray-600"><strong>Início:</strong>
+                                                            {{ $distribution->examSubject->start_time ? \Carbon\Carbon::parse($distribution->examSubject->start_time)->format('H:i') : 'N/A' }}
+                                                        </p>
+                                                        <p class="text-sm text-gray-600"><strong>LOCAL:</strong> {{ $distribution->room->school->name ?? 'N/A' }}</p>
+                                                        <p class="text-sm text-gray-600"><strong>SALA:</strong> {{ $distribution->room->name ?? 'N/A' }}</p>
                                                     </div>
                                                     @endif
-                                                    @endforeach
                                                 </div>
 
-                                                <!-- Exame 2 Tab -->
+                                                <!-- Exame 2 -->
                                                 <div x-show="activeExamTab === 'exam2'" class="mt-6">
-                                                    @foreach($candidate->juryDistributions as $index => $distribution)
-                                                    @if($index === 1)
-                                                    <div class="mb-6 border-b border-gray-300 pb-4">
-                                                        <!-- <h3 class="text-md font-semibold text-gray-700">
-                                                            Exame {{ $index + 1 }}
-                                                        </h3> -->
-                                                        <div class="mt-2 space-y-2">
-                                                            <p class="text-sm text-gray-600">
-                                                                <span class="font-medium">Disciplina:</span>
-                                                                {{ $distribution->disciplina->disciplina2 ?? 'N/A' }}
-                                                            </p>
-                                                            <p class="text-sm text-gray-600">
-                                                                <span class="font-medium">Dia:</span>
-                                                                {{ $distribution->disciplina->horario_disciplina2 
-                                                                    ? \Carbon\Carbon::parse($distribution->disciplina->horario_disciplina2)->format('d/m/Y') 
-                                                                    : 'N/A' }}
-                                                            </p>
-                                                            <p class="text-sm text-gray-600">
-                                                                <span class="font-medium">Hora de Chegada:</span>
-                                                                {{ $distribution->disciplina->horario_disciplina2 
-                                                                    ? \Carbon\Carbon::parse($distribution->disciplina->horario_disciplina2)
-                                                                        ->subMinutes(30)->format('H:i') 
-                                                                    : 'N/A' }}
-                                                            </p>
-                                                            <p class="text-sm text-gray-600">
-                                                                <span class="font-medium">Hora de Início:</span>
-                                                                {{ $distribution->disciplina->horario_disciplina2 
-                                                                    ? \Carbon\Carbon::parse($distribution->disciplina->horario_disciplina2)->format('H:i') 
-                                                                    : 'N/A' }}
-                                                            </p>
-                                                            <p class="text-sm text-gray-600">
-                                                                <span class="font-medium">Escola:</span>
-                                                                {{ $distribution->jury->room->school->name ?? 'N/A' }}
-                                                            </p>
-                                                            <p class="text-sm text-gray-600">
-                                                                <span class="font-medium">Sala do Exame:</span>
-                                                                {{ $distribution->jury->room->name ?? 'N/A' }}
-                                                            </p>
-                                                        </div>
+                                                    @if(isset($candidate->juryDistributions[1]))
+                                                    @php $distribution = $candidate->juryDistributions[1]; @endphp
+                                                    <div class="mb-6 border-b border-gray-300 pb-4 space-y-2">
+                                                        <p class="text-sm text-gray-600"><strong>DISCIPLINA:</strong> {{ $distribution->examSubject->name ?? 'N/A' }}</p>
+                                                        <p class="text-sm text-gray-600"><strong>DATA:</strong>
+                                                            {{ $distribution->examSubject->exam_date ? \Carbon\Carbon::parse($distribution->examSubject->exam_date)->format('d/m/Y') : 'N/A' }}
+                                                        </p>
+                                                        <p class="text-sm text-gray-600"><strong>PROVÍNCIA:</strong> {{ $distribution->province->name ?? 'N/A' }}</p>
+                                                        <p class="text-sm text-gray-600"><strong>Hora de chegada:</strong>
+                                                            {{ $distribution->examSubject->arrival_time ? \Carbon\Carbon::parse($distribution->examSubject->arrival_time)->format('H:i') : 'N/A' }}
+                                                        </p>
+                                                        <p class="text-sm text-gray-600"><strong>Início:</strong>
+                                                            {{ $distribution->examSubject->start_time ? \Carbon\Carbon::parse($distribution->examSubject->start_time)->format('H:i') : 'N/A' }}
+                                                        </p>
+                                                        <p class="text-sm text-gray-600"><strong>LOCAL:</strong> {{ $distribution->room->school->name ?? 'N/A' }}</p>
+                                                        <p class="text-sm text-gray-600"><strong>SALA:</strong> {{ $distribution->room->name ?? 'N/A' }}</p>
                                                     </div>
                                                     @endif
-                                                    @endforeach
                                                 </div>
+
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                                @else
-                                <div class="mt-4 p-4 text-sm text-yellow-700 bg-yellow-100 rounded-lg">
-                                    Nenhuma distribuição de júri encontrada.
-                                </div>
-                                @endif
                             </div>
                         </div>
                         @endif
+
+
+
+
 
                         <!-- Application Details Tab -->
                         <div x-show="activeTab === 'applicationDetails'" class="mt-6">
@@ -240,16 +195,16 @@
                                                     <x-ts-button xs wire:click="$toggle('editForm')" color="blue" class="w-full justify-center">
                                                     Editar Dados
                                                     </x-ts-button>
-                                                @endif
-                                                @if($payment && $payment->status == 1)
+                                                    @endif
+                                                    @if($payment && $payment->status == 1)
                                                     <x-ts-button xs color="green" href="{{ route('enrollment.confirmation') }}" class="w-full justify-center">
                                                         Baixar Confirmação da Inscrição
                                                     </x-ts-button>
-                                                @else
+                                                    @else
                                                     <x-ts-button xs color="amber" href="{{ route('enrollment.download') }}" class="w-full justify-center">
                                                         Baixar Guia de Pagamento
                                                     </x-ts-button>
-                                                @endif
+                                                    @endif
                                             </div>
                                         </div>
                                     </div>
@@ -300,16 +255,16 @@
                                                             <x-ts-button xs wire:click="$toggle('editForm')" color="blue">
                                                             Editar Dados
                                                             </x-ts-button>
-                                                        @endif
-                                                        @if($payment && $payment->status == 1)
+                                                            @endif
+                                                            @if($payment && $payment->status == 1)
                                                             <x-ts-button xs color="green" href="{{ route('enrollment.confirmation') }}">
                                                                 Baixar Confirmação da Inscrição
                                                             </x-ts-button>
-                                                        @else
+                                                            @else
                                                             <x-ts-button xs color="amber" href="{{ route('enrollment.download') }}">
                                                                 Baixar Guia de Pagamento
                                                             </x-ts-button>
-                                                        @endif
+                                                            @endif
                                                     </div>
                                                 </td>
                                             </tr>

@@ -94,4 +94,5 @@ class Candidate extends Model
 	{
 		return $this->hasMany(JuryDistribution::class, 'candidate_id');
 	}
+	
 }

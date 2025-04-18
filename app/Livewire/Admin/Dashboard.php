@@ -5,28 +5,28 @@ namespace App\Livewire\Admin;
 use App\Models\Candidate;
 use App\Models\Course;
 use App\Models\User;
-use App\Models\Payment; // Importação da tabela Payment
+use App\Models\Payment; 
 use Livewire\Component;
 use Livewire\WithPagination;
 use Illuminate\Database\Eloquent\Builder;
 
 class Dashboard extends Component
 {
-    use WithPagination; // Removido o uso do trait inexistente
+    use WithPagination; 
 
-    public ?int $quantity = 5; // Quantidade de registros por página
-    public ?string $search = null; // Termo de busca
-    public ?string $searchAdmin = null; // Termo de busca para administradores
+    public ?int $quantity = 5;  
+    public ?string $search = null;  
+    public ?string $searchAdmin = null;
     public $activeTab = 'candidatos';
     public $selectedCandidate;
-    public $admins; // Lista de administradores
-    public $nonAdmins; // Lista de usuários não administradores
-    public $showAddAdminModal = false; // Controla a exibição do modal
+    public $admins; 
+    public $nonAdmins; 
+    public $showAddAdminModal = false;  
 
     public function mount()
     {
         $this->loadAdmins();
-        $this->nonAdmins = []; // Inicializa como array vazio
+        $this->nonAdmins = [];  
     }
 
     public function getHeaders(): array

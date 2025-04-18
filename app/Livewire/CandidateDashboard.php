@@ -155,7 +155,7 @@ class CandidateDashboard extends Component
             'course',
             'province',
             'juryDistributions.jury.room.school',
-            'juryDistributions.disciplina'
+            'juryDistributions.examSubject'
         ]);
         
 		$this->currentStep 		= 1; 	// Inicia na primeira etapa
