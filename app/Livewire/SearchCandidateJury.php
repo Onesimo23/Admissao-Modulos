@@ -21,21 +21,20 @@ class SearchCandidateJury extends Component
     public function search()
     {
         $this->validate();
-
         $this->isProcessing = true;
-
+    
         try {
-            // Buscar o candidato com os relacionamentos necessários
             $candidate = Candidate::with([
                 'course',
-                'juryDistributions.jury.room.school', // Relações: Júri, Sala e Escola
-                'juryDistributions.disciplina',      // Relação: Disciplina
+                'localExam',
+                'juryDistributions.room.school',     // Acesso direto à sala e escola
+                'juryDistributions.examSubject',     // Acesso direto à disciplina
             ])->where('id', $this->candidateNumber)
               ->first();
-
+    
             if ($candidate) {
                 $this->candidateData = $candidate;
-
+    
                 $this->toast()
                     ->success('Sucesso!', 'Dados do candidato encontrados.')
                     ->send();
@@ -53,6 +52,7 @@ class SearchCandidateJury extends Component
             $this->isProcessing = false;
         }
     }
+    
 
     public function render()
     {
