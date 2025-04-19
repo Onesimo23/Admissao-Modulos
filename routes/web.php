@@ -16,7 +16,7 @@ use App\Livewire\RegistrationStatusLookup;
 use App\Livewire\Schools;
 use App\Livewire\Rooms;
 use App\Livewire\Monitors;
-use App\Livewire\JuriDistribution;
+use App\Livewire\JuryDistribution;
 use App\Livewire\Disciplines;
 use App\Livewire\SearchCandidateJury;
 use App\Livewire\Admin\Dashboard;
@@ -53,8 +53,7 @@ Route::middleware(['auth',])->group(function () {
 	Route::get('/salas', Rooms::class)->name('class-models');
 	Route::get('/monitores', Monitors::class)->name('monitors.index');
 	Route::get('/disciplines', Disciplines::class)->name('disciplines.index');
-	Route::get('/jury-distributions', JuriDistribution::class)->name('jury.distributions');
-	Route::post('/distribute-juris', [JuriDistribution::class, 'distribute'])->name('distribute');
+	Route::get('/jury-distributions', JuryDistribution::class)->name('jury.distributions');
 });
 
 Route::get('/candidates/data', function () {

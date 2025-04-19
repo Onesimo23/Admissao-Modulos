@@ -170,6 +170,6 @@ class JuryDistribution extends Component
 
     public function render()
     {
-        return view('livewire.jury-distribution');
+        return view('livewire.jury-distribution')->layout('layouts.admin');
     }
 }

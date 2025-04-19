@@ -257,48 +257,65 @@
                 <hr class="mb-4">
                 <nav>
                     <ul class="space-y-2">
+                        <!-- Link para Início -->
                         <li>
                             <a href="{{ route('admin.dashboard') }}" class="flex items-center py-2 px-4 rounded hover:bg-indigo-700 transition duration-200 menu-item">
-                                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="size-6">
-                                    <path stroke-linecap="round" stroke-linejoin="round" d="M4.26 10.147a60.438 60.438 0 0 0-.491 6.347A48.62 48.62 0 0 1 12 20.904a48.62 48.62 0 0 1 8.232-4.41 60.46 60.46 0 0 0-.491-6.347m-15.482 0a50.636 50.636 0 0 0-2.658-.813A59.906 59.906 0 0 1 12 3.493a59.903 59.903 0 0 1 10.399 5.84c-.896.248-1.783.52-2.658.814m-15.482 0A50.717 50.717 0 0 1 12 13.489a50.702 50.702 0 0 1 7.74-3.342M6.75 15a.75.75 0 1 0 0-1.5.75.75 0 0 0 0 1.5Zm0 0v-3.675A55.378 55.378 0 0 1 12 8.443m-7.007 11.55A5.981 5.981 0 0 0 6.75 15.75v-1.5" />
-                                </svg>
-
+                                <i class="fas fa-home"></i>
                                 <span class="sidebar-full ml-3">Início</span>
                             </a>
                         </li>
+
+                        <!-- Aba expansível para os outros links -->
                         <li>
-                            <a href="{{ route('schools.index') }}" class="flex items-center py-2 px-4 rounded hover:bg-indigo-700 transition duration-200 menu-item">
-                                <i class="fas fa-school"></i>
-                                <span class="sidebar-full ml-3">Escolas</span>
+                            <div class="menu-item flex items-center py-2 px-4 rounded hover:bg-indigo-700 transition duration-200 cursor-pointer">
+                                <i class="fas fa-cogs"></i>
+                                <span class="sidebar-full ml-3">Administração dos Júris</span>
+                                <i class="fas fa-chevron-down ml-auto"></i>
+                            </div>
+                            <ul class="submenu space-y-2 pl-6">
+                                <li>
+                                    <a href="{{ route('schools.index') }}" class="flex items-center py-2 px-4 rounded hover:bg-indigo-700 transition duration-200 submenu-item">
+                                        <i class="fas fa-school"></i>
+                                        <span class="ml-3">Escolas</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('class-models') }}" class="flex items-center py-2 px-4 rounded hover:bg-indigo-700 transition duration-200 submenu-item">
+                                        <i class="fas fa-chalkboard"></i>
+                                        <span class="ml-3">Salas</span>
+                                    </a>
+                                </li>
+
+                                <li>
+                                    <a href="{{ route('disciplines.index') }}" class="flex items-center py-2 px-4 rounded hover:bg-indigo-700 transition duration-200 submenu-item">
+                                        <i class="fas fa-book"></i>
+                                        <span class="ml-3">Cursos</span>
+                                    </a>
+                                </li>
+                                <li>
+                                    <a href="{{ route('jury.distributions') }}" class="flex items-center py-2 px-4 rounded hover:bg-indigo-700 transition duration-200 submenu-item">
+                                        <i class="fas fa-gavel"></i>
+                                        <span class="ml-3">Distribuição de Júris</span>
+                                    </a>
+                                </li>
+                            </ul>
+                        </li>
+                        <!-- Link para Gestão -->
+                        <li>
+                            <a href="{{ route('admin.gestao') }}" class="flex items-center py-2 px-4 rounded hover:bg-indigo-700 transition duration-200 menu-item">
+                                <i class="fas fa-tasks"></i>
+                                <span class="sidebar-full ml-3">Gestão</span>
                             </a>
                         </li>
-                        <li>
-                            <a href="{{ route('class-models') }}" class="flex items-center py-2 px-4 rounded hover:bg-indigo-700 transition duration-200 menu-item">
-                                <i class="fas fa-chalkboard"></i>
-                                <span class="sidebar-full ml-3">Salas</span>
-                            </a>
-                        </li>
-                      
-                        <li>
-                            <a href="{{ route('disciplines.index') }}" class="flex items-center py-2 px-4 rounded hover:bg-indigo-700 transition duration-200 menu-item">
-                                <i class="fas fa-book"></i>
-                                <span class="sidebar-full ml-3">Cursos</span>
-                            </a>
-                        </li>
-                        <li>
-                            <a href="{{ route('jury.distributions') }}" class="flex items-center py-2 px-4 rounded hover:bg-indigo-700 transition duration-200 menu-item">
-                                <i class="fas fa-gavel"></i>
-                                <span class="sidebar-full ml-3">Distribuição de Júris</span>
-                            </a>
-                        </li>
+                        <!-- Botão para Sair -->
                         <li>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="w-full text-left px-4 py-2 text-yellow-700 dark:yellow-gray-300 hover:bg-red-100 dark:hover:bg-red-700">
-                                    SAIR
+                                <button type="submit" class="flex items-center w-full text-left px-4 py-2 rounded hover:bg-red-600 transition duration-200 text-white bg-red-500">
+                                    <i class="fas fa-sign-out-alt mr-3"></i>
+                                    <span class="sidebar-full">Sair</span>
                                 </button>
                             </form>
-
                         </li>
                     </ul>
                 </nav>
@@ -329,7 +346,8 @@
                         <div id="user-dropdown" class="absolute right-0 mt-2 w-48 bg-white dark:bg-gray-800 rounded-lg shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none z-50 hidden">
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="w-full text-left px-4 py-2 text-sm text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700">
+                                <button type="submit" class="flex items-center w-full text-left px-4 py-2 rounded hover:bg-red-600 transition duration-200 text-white bg-red-500">
+                                    <i class="fas fa-sign-out-alt mr-3"></i>
                                     Sair
                                 </button>
                             </form>
