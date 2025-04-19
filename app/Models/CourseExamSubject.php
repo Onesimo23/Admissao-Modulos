@@ -10,7 +10,7 @@ class CourseExamSubject extends Model
     use HasFactory;
 
     protected $table = 'course_exam_subjects'; // Nome da tabela
-    protected $fillable = ['course_id', 'exam_subject_id'];
+    protected $fillable = ['uuid', 'course_id', 'exam_subject_id'];
 
     // Relação com Course
     public function course()
