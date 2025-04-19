@@ -12,6 +12,9 @@ use Barryvdh\DomPDF\Facade\Pdf;
 use TallStackUi\Traits\Interactions;
 use Illuminate\Support\Facades\Response;
 use Illuminate\Support\Facades\Log;
+use PhpOffice\PhpWord\PhpWord;
+use PhpOffice\PhpWord\IOFactory;
+use Illuminate\Support\Facades\Storage;
 
 class JuryDistribution extends Component
 {
@@ -166,7 +169,86 @@ class JuryDistribution extends Component
         );
     }
 
-
+    public function downloadWord()
+    {
+        $juries = JuryDistributionModel::with(['candidate', 'room', 'school', 'province', 'examSubject'])
+            ->get()
+            ->sortBy(function ($jury) {
+                $examDate = $jury->examSubject->exam_date ?? '9999-12-31';
+                $startTime = $jury->examSubject->start_time ?? '23:59:59';
+                return $examDate . ' ' . $startTime;
+            })
+            ->groupBy(function ($jury) {
+                return $jury->exam_subject_id . '-' . $jury->room_id;
+            });
+    
+        $phpWord = new PhpWord();
+    
+        // Define o estilo da tabela com bordas
+        $phpWord->addTableStyle('juryTableStyle', [
+            'borderSize' => 6,
+            'borderColor' => '000000',
+            'cellMargin' => 80,
+        ], [
+            'align' => 'center',
+        ]);
+    
+        $section = $phpWord->addSection();
+    
+        foreach ($juries as $groupKey => $juryGroup) {
+            $first = $juryGroup->first();
+            $examSubject = $first->examSubject;
+            $room = $first->room;
+            $school = $first->school;
+            $province = $first->province;
+    
+            // Adiciona o logotipo
+            $section->addImage(public_path('up.png'), [
+                'width' => 50,
+                'height' => 50,
+                'alignment' => \PhpOffice\PhpWord\SimpleType\Jc::CENTER,
+            ]);
+    
+            $section->addText("Universidade Save", ['bold' => true, 'size' => 16], ['alignment' => 'center']);
+            $section->addText("Exames de Admissão de " . date('Y'), ['bold' => true, 'size' => 14], ['alignment' => 'center']);
+            $section->addText("Lista de Candidatos por Sala de Exame", ['bold' => true, 'size' => 12], ['alignment' => 'center']);
+            $section->addTextBreak(1);
+    
+            $section->addText("DISCIPLINA: {$examSubject->name}");
+            $section->addText("DATA: {$examSubject->exam_date}");
+            $section->addText("HORA: {$examSubject->start_time}");
+            $section->addText("H. ENTRADA: {$examSubject->arrival_time}");
+            $section->addText("PROVÍNCIA: {$province->name}");
+            $section->addText("SALA: {$room->name}");
+            $section->addText("LOCAL: {$school->name}");
+            $section->addTextBreak(1);
+    
+            // Tabela com bordas
+            $table = $section->addTable('juryTableStyle');
+    
+            $table->addRow();
+            $table->addCell(3000)->addText('Nrº de Candidato', ['bold' => true]);
+            $table->addCell(6000)->addText('Nome do Candidato', ['bold' => true]);
+            $table->addCell(4000)->addText('Assinatura do Candidato', ['bold' => true]);
+    
+            foreach ($juryGroup as $jury) {
+                $table->addRow();
+                $table->addCell()->addText($jury->candidate->id);
+                $table->addCell()->addText($jury->candidate->surname . ' ' . $jury->candidate->name);
+                $table->addCell()->addText('');
+            }
+    
+            $section->addPageBreak();
+        }
+    
+        $filename = 'jury_distribution.docx';
+        $tempFile = storage_path("app/public/{$filename}");
+        IOFactory::createWriter($phpWord, 'Word2007')->save($tempFile);
+    
+        return response()->download($tempFile)->deleteFileAfterSend(true);
+    }
+    
+    
 
     public function render()
     {
