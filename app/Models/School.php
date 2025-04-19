@@ -10,7 +10,7 @@ class School extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['name', 'priority_level', 'province_id'];
+    protected $fillable = ['name', 'priority_level', 'province_id', 'status'];
     protected $guarded = [];
 
     public function province()

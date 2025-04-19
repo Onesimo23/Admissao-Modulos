@@ -12,16 +12,18 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('rooms', function (Blueprint $table) {
-                    $table->id();
-                    $table->foreignId('school_id')->constrained();
-                    $table->string('name');
-                    $table->integer('capacity');
-                    $table->integer('priority_level');
-                    $table->boolean('status')->default(true);
-                    $table->timestamps();
-                });
-            }
-            
+            $table->id();
+            $table->foreignId('school_id')
+                ->constrained()
+                ->onDelete('cascade');
+            $table->string('name');
+            $table->integer('capacity');
+            $table->integer('priority_level');
+            $table->boolean('status')->default(true);
+            $table->timestamps();
+        });
+    }
+
 
     /**
      * Reverse the migrations.

@@ -246,6 +246,7 @@
 
 <body class="font-sans bg-gray-100 transition-colors duration-200">
     <x-ts-toast />
+    <x-ts-dialog />
 
     <div id="overlay" class="overlay"></div>
     <div class="flex h-auto">
