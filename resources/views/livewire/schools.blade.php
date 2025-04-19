@@ -4,13 +4,10 @@
     <!-- Formulário para adicionar ou editar escola -->
     <form wire:submit.prevent="store" class="mb-8 space-y-6">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <!-- Nome da Escola -->
             <div>
                 <x-ts-input label="Nome da Escola" wire:model.defer="name" placeholder="Insira o nome da escola" />
                 @error('name') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
-
-            <!-- Nível de Prioridade -->
             <div>
                 <x-ts-select.styled
                     label="Nível de Prioridade"
@@ -22,8 +19,6 @@
                     wire:model.defer="priority_level" />
                 @error('priority_level') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
-
-            <!-- Província -->
             <div>
                 <x-ts-select.styled
                     label="Província"
@@ -32,23 +27,15 @@
                     wire:model.defer="province_id" />
                 @error('province_id') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
-
-            <!-- Status da Escola -->
-            <div class="flex items-center space-x-2">
-                <x-ts-toggle
-                    label="Escola Ativa?"
-                    wire:model.defer="status"
-                    :value="true" />
+            <div>
+                <x-ts-checkbox label="Ativa" wire:model.defer="status" />
                 @error('status') <span class="text-red-500 text-sm">{{ $message }}</span> @enderror
             </div>
-
-            <!-- Botão de Salvar Escola -->
-            <div class="flex ">
-                <x-ts-button type="submit" class="mt-4">
-                    Salvar Escola
-                </x-ts-button>
-            </div>
         </div>
+
+        <x-ts-button type="submit" class="mt-4">
+            {{ $editing ? 'Atualizar Escola' : 'Salvar Escola' }}
+        </x-ts-button>
     </form>
 
     <!-- Tabela de Escolas -->
@@ -58,8 +45,8 @@
                 <tr>
                     <th class="py-3 px-4 text-left">#</th>
                     <th class="py-3 px-4 text-left">Nome</th>
-                    <th class="py-3 px-4 text-left">Nível de Prioridade</th>
                     <th class="py-3 px-4 text-left">Província</th>
+                    <th class="py-3 px-4 text-left">Nível de Prioridade</th>
                     <th class="py-3 px-4 text-left">Status</th>
                     <th class="py-3 px-4 text-center">Ações</th>
                 </tr>
@@ -69,31 +56,38 @@
                 <tr class="border-t {{ !$school->status ? 'bg-red-100' : '' }}">
                     <td class="py-3 px-4">{{ $loop->iteration }}</td>
                     <td class="py-3 px-4">{{ $school->name }}</td>
-                    <td class="py-3 px-4">
-                        @if ($school->priority_level === 1)
-                        Alto
-                        @else
-                        Baixo
-                        @endif
-                    </td>
                     <td class="py-3 px-4">{{ $school->province->name }}</td>
                     <td class="py-3 px-4">
-                        @if($school->status)
-                        <span class="text-green-600 font-semibold">Ativa</span>
+                        @if ($school->priority_level === 1)
+                        <x-ts-badge color="warning">Alta</x-ts-badge>
                         @else
-                        <span class="text-red-600 font-semibold">Inativa</span>
+                        <x-ts-badge color="secondary">Baixa</x-ts-badge>
+                        @endif
+                    </td>
+                    <td class="py-3 px-4">
+                        @if($school->status)
+                        <x-ts-badge color="success">Ativa</x-ts-badge>
+                        @else
+                        <x-ts-badge color="danger">Inativa</x-ts-badge>
                         @endif
                     </td>
                     <td class="py-3 px-4 flex justify-center space-x-4">
                         <!-- Botão Editar -->
-                        <button wire:click="edit({{ $school->id }})" class="text-blue-500 hover:text-blue-700">
-                            <i class="fas fa-edit"></i>
-                        </button>
-
+                        <x-ts-button
+                            icon="pencil"
+                            size="sm"
+                            color="info"
+                            variant="solid"
+                            wire:click="edit({{ $school->id }})"
+                            tooltip="Editar" />
                         <!-- Botão Excluir -->
-                        <button wire:click="delete({{ $school->id }})" class="text-red-500 hover:text-red-700">
-                            <i class="fas fa-trash"></i>
-                        </button>
+                        <x-ts-button
+                            icon="trash"
+                            size="sm"
+                            color="info"
+                            variant="danger"
+                            wire:click="delete({{ $school->id }})"
+                            tooltip="Excluir" />
                     </td>
                 </tr>
                 @endforeach

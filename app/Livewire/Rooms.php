@@ -23,6 +23,8 @@ class Rooms extends Component
     public $priority_level;
     public ?int $quantity = 10;
     public ?string $search = null;
+    public $actionLabel = 'Salvar Sala';
+
 
     protected $rules = [
         'name' => 'required|string|max:255',
@@ -60,6 +62,7 @@ class Rooms extends Component
                 'priority_level' => $this->priority_level,
                 'school_id' => $this->school_id,
             ]);
+
             $this->toast()->success('Sucesso', 'Sala atualizada com sucesso!')->send();
         } else {
             Room::create([
@@ -69,11 +72,13 @@ class Rooms extends Component
                 'priority_level' => $this->priority_level,
                 'school_id' => $this->school_id,
             ]);
+
             $this->toast()->success('Sucesso', 'Sala criada com sucesso!')->send();
         }
 
         $this->resetForm();
     }
+
 
     public function edit($id)
     {
@@ -87,11 +92,41 @@ class Rooms extends Component
         $this->school_id = $classModel->school_id;
     }
 
+
     public function delete($id)
     {
-        Room::findOrFail($id)->delete();
-        $this->toast()->success('Sucesso', 'Sala excluída com sucesso!')->send();
+        $room = Room::find($id);
+
+        if (!$room) {
+            $this->toast()->error('Erro', 'Sala não encontrada.')->send();
+            return;
+        }
+
+        $this->dialog()
+            ->question('Tem certeza?', "Deseja realmente excluir a sala \"{$room->name}\"?")
+            ->confirm('Sim, excluir', 'confirmDelete', $id) // sem colchetes
+            ->cancel('Cancelar')
+            ->send();
     }
+
+    public function confirmDelete($id)
+    {
+        if (is_array($id)) {
+            $this->toast()->error('Erro', 'ID inválido para exclusão.')->send();
+            return;
+        }
+
+        $room = Room::find($id);
+
+        if ($room) {
+            $room->delete();
+            $this->toast()->success('Sucesso', 'Sala excluída com sucesso!')->send();
+        } else {
+            $this->toast()->error('Erro', 'Sala não encontrada.')->send();
+        }
+    }
+
+
 
     private function resetForm()
     {
@@ -101,25 +136,19 @@ class Rooms extends Component
         $this->status = true;
         $this->priority_level = '';
         $this->school_id = '';
+        $this->classModelId = null;
     }
 
     public function render()
     {
         $rooms = Room::query()
-        ->with('school')
-        ->when($this->search, function (Builder $query) {
-            return $query->where('name', 'like', "%{$this->search}%");
-        })
-        ->paginate($this->quantity);
+            ->with('school')
+            ->when($this->search, function (Builder $query) {
+                return $query->where('name', 'like', "%{$this->search}%");
+            })
+            ->paginate($this->quantity);
+
         return view('livewire.class-models', [
-            'headers' => [
-                ['index' => 'id', 'label' => '#'],
-                ['index' => 'name', 'label' => 'Nome'],
-                ['index' => 'capacity', 'label' => 'Capacidade'],
-                ['index' => 'status', 'label' => 'Status'],
-                ['index' => 'school.name', 'label' => 'Escola'],
-                ['index' => 'priority_level', 'label' => 'Nível de Prioridade'],
-            ],
             'rows' => $rooms,
         ])->layout('layouts.admin');
     }
