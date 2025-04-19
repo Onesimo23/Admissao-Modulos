@@ -21,6 +21,7 @@ use App\Livewire\Disciplines;
 use App\Livewire\SearchCandidateJury;
 use App\Livewire\Admin\Dashboard;
 use App\Models\Candidate;
+use App\Livewire\Admin\Gestao;
 
 Route::middleware('guest')->group(function () {
 	Route::view('/', 'index')->name('index');
@@ -47,6 +48,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
 //corrigir as rotas apara acessoa apenas do admin
 Route::middleware(['auth',])->group(function () {
 	Route::get('/admin', Dashboard::class)->name('admin.dashboard');
+	Route::get('/gestao', Gestao::class)->name('admin.gestao');	
 	Route::get('/schools', Schools::class)->name('schools.index');
 	Route::get('/salas', Rooms::class)->name('class-models');
 	Route::get('/monitores', Monitors::class)->name('monitors.index');
